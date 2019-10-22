@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.sys.mapper.SysQuestionMapper">
+    <resultMap type="com.kst.sys.api.entity.SysQuestion" id="sysQuestionMap">
+        <id property="id" column="id"/>
+        <result property="qusFlag" column="qus_flag"/>
+        <result property="qusflag" column="qusflag"/>
+        <result property="qusTitle" column="qus_title"/>
+        <result property="qusPushdetail" column="qus_pushdetail"/>
+        <result property="qusPushattachlist" column="qus_pushattachlist"/>
+        <result property="qusPushdate" column="qus_pushdate"/>
+        <result property="qusPusher" column="qus_pusher"/>
+        <result property="qusDesignator" column="qus_designator"/>
+        <result property="qusEnable" column="qus_enable"/>
+        <result property="qusPushername" column="qusPushername"/>
+        <result property="qusRequestdetail" column="qus_requestdetail"/>
+        <result property="qusRequestattachlist" column="qus_requestattachlist"/>
+        <result property="qusRequestdate" column="qus_requestdate"/>
+        <result property="qusRequester" column="qus_requester"/>
+        <result property="qusRequestername" column="qusRequestername"/>
+        <result property="qusStatus" column="qus_status"/>
+        <result property="qusstatus" column="qusstatus"/>
+        <result property="createDate" column="create_date"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+        <collection property="attachs" column="{ids = qus_pushattachlist}" select="selectResource">
+            <id property="id" column="id"/>
+            <result property="typeId" column="type_id"/>
+            <result property="url" column="url"/>
+            <result property="name" column="name"/>
+            <result property="fileSize" column="file_size"/>
+            <result property="fileType" column="file_type"/>
+            <result property="fileCreateDate" column="file_create_date"/>
+            <result property="fileUpdateDate" column="file_update_date"/>
+        </collection>
+        <collection property="attachsDa" column="{ids = qus_requestattachlist}" select="selectResourceDa">
+            <id property="id" column="id"/>
+            <result property="typeId" column="type_id"/>
+            <result property="url" column="url"/>
+            <result property="name" column="name"/>
+            <result property="fileSize" column="file_size"/>
+            <result property="fileType" column="file_type"/>
+            <result property="fileCreateDate" column="file_create_date"/>
+            <result property="fileUpdateDate" column="file_update_date"/>
+        </collection>
+        <collection property="userLists" column="id" select="selectUserByMsgId">
+            <id property="id" column="id"/>
+            <result property="loginName" column="login_name"/>
+            <result property="nickName" column="nick_name"/>
+            <result property="tel" column="tel"/>
+            <result property="email" column="email"/>
+            <result property="password" column="password"/>
+            <result property="salt" column="salt"/>
+            <result property="locked" column="locked"/>
+            <result property="disableFlag" column="disable_flag"/>
+            <result property="remarks" column="remarks"/>
+            <result property="delFlag" column="del_flag"/>
+            <result property="icon" column="icon"/>
+            <result property="organizationId" column="organization_id"/>
+            <result property="major" column="major"/>
+            <result property="organizationName" column="organization_name"></result>
+        </collection>
+    </resultMap>
+    <select id="selectUserByMsgId" parameterType="java.lang.Long" resultType="com.kst.sys.api.vo.UserVO">
+      select * from sys_user u left join sys_msg_readlist mr on u.id=mr.user_id where mr.msg_id=#{id}
+    </select>
+    <select id="selectSysQuestionByPage" resultMap="sysQuestionMap" parameterType="com.kst.common.base.vo.DataTable">
+        SELECT *,sys_getDictLable('sys_qus_status',qus_status) qusstatus,sys_getDictLable('sys_qus_flag',qus_flag) qusflag
+        ,sys_getUserName(qus_pusher) qusPushername,sys_getUserName(qus_requester) qusRequestername
+        FROM sys_question where 1=1
+        <if test='searchParams.qusTitle!=null and searchParams.qusTitle!=""'>
+            and qus_title like CONCAT('%','${searchParams.qusTitle}','%')
+        </if>
+        <if test='searchParams.qusFlag!=null and searchParams.qusFlag!=""'>
+            and qus_flag =#{searchParams.qusFlag}
+        </if>
+        <if test='searchParams.qusStatus!=null and searchParams.qusStatus!=""'>
+            and qus_status =#{searchParams.qusStatus}
+        </if>
+        <if test='searchParams.qusPusher!=null and searchParams.qusPusher!=""'>
+            and qus_pusher =#{searchParams.qusPusher}
+        </if>
+        <if test='searchParams.qusRequester!=null and searchParams.qusRequester!=""'>
+            and qus_requester = #{searchParams.qusRequester}
+        </if>
+        and del_flag = false
+        and qus_enable = false
+        or qus_designator like concat('%',
+        (select id from sys_user where login_name=#{searchParams.loginName})
+        ,'%')
+        order by qus_pushdate desc
+        limit #{searchParams.startNo},#{pageSize}
+    </select>
+
+    <select id="selectSysQuestionTotal" resultType="java.lang.Integer" parameterType="com.kst.common.base.vo.DataTable" >
+        SELECT count(*),sys_getDictLable('sys_qus_status',qus_status) qusstatus,sys_getDictLable('sys_qus_flag',qus_flag) qusflag
+        ,sys_getUserName(qus_pusher) qusPushername,sys_getUserName(qus_requester) qusRequestername
+        FROM sys_question where 1=1
+        <if test='searchParams.qusTitle!=null and searchParams.qusTitle!=""'>
+            and qus_title like CONCAT('%','${searchParams.qusTitle}','%')
+        </if>
+        <if test='searchParams.qusFlag!=null and searchParams.qusFlag!=""'>
+            and qus_flag =#{searchParams.qusFlag}
+        </if>
+        <if test='searchParams.qusStatus!=null and searchParams.qusStatus!=""'>
+            and qus_status =#{searchParams.qusStatus}
+        </if>
+        <if test='searchParams.qusPusher!=null and searchParams.qusPusher!=""'>
+            and qus_pusher =#{searchParams.qusPusher}
+        </if>
+        <if test='searchParams.qusRequester!=null and searchParams.qusRequester!=""'>
+            and qus_requester =#{searchParams.qusRequester}
+        </if>
+        and del_flag = false
+        and qus_enable = false
+        or qus_designator like concat('%',
+        (select id from sys_user where login_name=#{searchParams.loginName})
+        ,'%')
+        order by qus_pushdate desc
+    </select>
+
+
+    <select id="selectResource" parameterType="java.util.Map" resultType="com.kst.sys.api.entity.Resource">
+        select * from sys_resource where id in
+        <foreach collection="ids.split(',')" item="value"
+                 index="index" open="(" close=")" separator=",">
+            #{value}
+        </foreach>
+    </select>
+    <select id="selectResourceDa" parameterType="java.util.Map" resultType="com.kst.sys.api.entity.Resource">
+        select * from sys_resource where id in
+        <foreach collection="ids.split(',')" item="value"
+                 index="index" open="(" close=")" separator=",">
+            #{value}
+        </foreach>
+    </select>
+    <select id="selectSysQuestionByMap" resultMap="sysQuestionMap" parameterType="java.util.Map">
+        <if test='id!=null and id!="" '>
+          SELECT * FROM sys_question where id = #{id}
+        </if>
+    </select>
+</mapper>

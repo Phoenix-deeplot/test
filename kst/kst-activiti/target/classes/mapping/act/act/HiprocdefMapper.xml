@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kst.activiti.mapper.act.HiprocdefMapper">
+	<resultMap type="com.kst.activiti.vo.HiprocdefVO" id="hiprocdefMap">
+		<id property="id" column="id"/>
+		<result property="applyId" column="APPLY_ID"/>
+		<result property="no" column="no"/>
+		<result property="applyDate" column="APPLY_DATE"/>
+		<result property="name" column="name"/>
+		<result property="returnDate" column="STORAGE_DATE"/>
+		<result property="moreInfo" column="MORE_INFO"/>
+		<result property="remarks" column="remarks"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="applyStatus" column="apply_userId"/>
+	</resultMap>
+	<!--流程历史表名 -->
+	<sql id="tableName">
+		ACT_HI_PROCINST
+	</sql>
+	
+	<!--流程定义表 -->
+	<sql id="ptableName">
+		ACT_RE_PROCDEF
+	</sql>
+	
+	<!--历史流程变量表 -->
+	<sql id="hivartableName">
+		ACT_HI_VARINST
+	</sql>
+	
+	<!-- 历史流程列表-->
+	<select id="datalistPage" parameterType="com.kst.common.base.vo.DataTable" resultMap="hiprocdefMap">
+		select
+			hp.*,
+			rp.NAME_ PNAME_,
+			rp.VERSION_,
+			rp.ID_ PID_,
+			rp.DEPLOYMENT_ID_,
+			rp.DGRM_RESOURCE_NAME_
+		from 
+		<include refid="tableName"></include> hp
+		left join
+		<include refid="ptableName"></include> rp
+		on hp.PROC_DEF_ID_ = rp.ID_
+		where 1=1
+		<if test="searchParams.keywords!= null and searchParams.keywords != ''"><!-- 关键词检索 -->
+			and
+				(
+					rp.NAME_ LIKE CONCAT(CONCAT('%', #{searchParams.keywords}),'%')
+				)
+		</if>
+		<if test="searchParams.lastStart != null and searchParams.lastStart != ''"><!-- 开始时间检索 -->
+			and hp.END_TIME_ &gt;= #{pd.lastStart} 
+		</if>
+		<if test="searchParams.lastEnd != null and searchParams.lastEnd != ''"><!-- 结束时间检索 -->
+			and hp.END_TIME_ &lt;= #{pd.lastEnd} 
+		</if>
+		and hp.END_TIME_ is not NULL
+		order by hp.END_TIME_ desc
+	</select>
+	
+	<!-- 历史流程变量列表 -->
+	<select id="hivarList" parameterType="com.kst.common.base.vo.DataTable" resultMap="hiprocdefMap">
+		select
+			*
+		from 
+			<include refid="hivartableName"></include>
+		where 1=1
+		<if test="PROC_INST_ID_ != null and PROC_INST_ID_ != ''"><!-- 流程实例ID -->
+			and PROC_INST_ID_ = #{PROC_INST_ID_}
+			and TASK_ID_ is NULL
+		</if>
+	</select>
+
+</mapper>

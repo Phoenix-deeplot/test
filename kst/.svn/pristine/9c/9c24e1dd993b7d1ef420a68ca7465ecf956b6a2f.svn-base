@@ -1,0 +1,119 @@
+server:
+  port: 8080
+
+#显示在主页面的文字
+adminText: Admin
+projectName: KST
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  #视图配置
+  #mvc:
+  #  static-path-pattern: /static/**
+  #连接池配置
+  datasource:
+    name: test
+    url: jdbc:mysql://192.168.1.220:3306/kst?characterEncoding=utf-8&serverTimezone=GMT
+    username: root
+    password: root
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+
+  #redis配置
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password:      # 密码（默认为空）
+    jedis:
+      pool:
+        max-idle: 10      # 连接池中的最大空闲连接
+        min-idle: 5       # 连接池中的最小空闲连接
+        max-active: 1000  # 连接池最大连接数（使用负值表示没有限制）
+        max-wait: -1      # 连接池最大阻塞等待时间（使用负值表示没有限制）
+    timeout: 6000  # 连接超时时长（毫秒）
+
+  #模板引擎配置
+  freemarker:
+    template-loader-path: classpath:/templates/
+    prefer-file-system-access: false
+    settings:
+      template_update_delay: 0
+      classic_compatible: true
+      number_format: 0.######
+      template_exception_handler: ignore
+    request-context-attribute: rc
+    charset: UTF-8
+
+  #缓存配置
+  cache:
+    type: redis
+    cache-names: kst
+
+mybatis:
+  mapper-locations: classpath*:mapping/*.xml
+  type-aliases-package: com.kst.sys.api.entity
+mybatis-plus:
+  mapper-locations: classpath*:mapping/*.xml
+  #实体扫描，多个package用逗号或者分号隔离
+  typeAliasesPackage: com.kst.sys.api.entity
+
+  global-config:
+    db-config:
+      #主键类型  AUTO(0):"数据库ID自增", NONE(1):该类型为未设置主键类型", INPUT(2):用户输入ID",
+      #          ID_WORKER (3):"分布式全局唯一ID (数字类型唯一ID)", UUID(4):"全局唯一ID UUID";
+      id-type: ID_WORKER
+      #字段策略 0:"忽略判断",1:"非 NULL 判断"),2:"非空判断"
+      field-strategy: default
+      db-type: mysql
+    banner: false #关闭MyBatis-Plus自带的打印Banner
+    #全局表为下划线命名设置
+    #db-column-underline: true
+    #刷新mapper 调试神器
+    #refresh-mapper: true
+    #数据库大写下划线转换
+    #capital-mode: true
+    #序列接口实现类配置
+    #key-generator: com.baomidou.springboot.xxx
+    #逻辑删除配置
+    #    logic-delete-value: 1
+    #    logic-not-delete-value: 0
+    #自定义填充策略接口实现
+    #metaObjectHandler: com.kst.upms.config.plus.SysMetaObjectHandler
+    #super-mapping-class: com.baomidou.mybatisplus.core.mapping.BaseMapper
+    #自定义SQL注入器
+    #sql-injector: com.baomidou.springboot.xxx
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+#security:
+#  basic:
+#    enabled: false
+
+management:
+  security:
+    enabled: false
+
+attach_path: D:/project/isms/10_Engineering(C2)/20_本開発/30_Source/kst/attach/
+macAddress: fe40a33108fff495ccb5d06ba2f0e1e6416d77f1
+limitDate: MjAxOTEyMjU1NEVFNzVFRTc3QjA==

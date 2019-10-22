@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.att.mapper.AttRfidMapper">
+    <resultMap type="com.kst.att.vo.RfidVO" id="rfidMap">
+        <id property="id" column="id"/>
+        <result property="ip" column="rfid_ip"/>
+        <result property="com" column="rfid_com"/>
+        <result property="location" column="rfid_location"/>
+        <result property="name" column="rfid_name"/>
+        <result property="canuse" column="rfid_canuse"/>
+        <result property="useflg" column="rfid_useflg"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="attRfidId" column="attRfidId"/>
+    </resultMap>
+
+    <select id="selectAttRfidByPage" parameterType="com.kst.common.base.vo.DataTable" resultMap="rfidMap">
+      select s.*,a.id as attRfidId from att_rfid a inner join sys_rfid s on a.rfid_id=s.id
+      where a.del_flag=false and s.del_flag=false
+      limit #{searchParams.startNo} , #{pageSize}
+    </select>
+
+    <select id="selectAttRfidTotal" parameterType="com.kst.common.base.vo.DataTable" resultType="java.lang.Integer">
+        select count(*) from att_rfid a inner join sys_rfid s on a.rfid_id=s.id
+        where a.del_flag=false and s.del_flag=false
+    </select>
+
+    <select id="selectAllAttRfid" resultMap="rfidMap" parameterType="java.util.Map">
+        select s.*,a.id as attRfidId from att_rfid a inner join sys_rfid s on a.rfid_id=s.id
+      where a.del_flag=false and s.del_flag=false
+      <if test="useflg!=null and useflg!=''">
+          and s.rfid_useflg=#{useflg}
+      </if>
+    </select>
+
+</mapper>

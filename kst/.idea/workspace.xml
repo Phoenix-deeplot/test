@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="c2cdc0af-c895-439b-8140-fb8d8ec59249" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/kst-activiti.iml" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/kst-activiti.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/target/classes/static/diagram-viewer/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/target/classes/static/diagram-viewer/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/target/classes/static/diagram-viewer/js/jquery/jquery.js" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/target/classes/static/diagram-viewer/js/jquery/jquery.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/configuration/toolbar-default-actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/configuration/toolbar-default-actions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/css/style-common.css" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/css/style-common.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/editor.html" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/editor.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/i18n/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/i18n/en.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/libs/angular-mocks_1.2.13/angular-mocks.js" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/libs/angular-mocks_1.2.13/angular-mocks.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/libs/es5-shim-15.3.4.5/es5-shim.js" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/libs/es5-shim-15.3.4.5/es5-shim.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/libs/es5-shim-15.3.4.5/tests/lib/jasmine.js" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/libs/es5-shim-15.3.4.5/tests/lib/jasmine.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/libs/jquery_1.11.0/jquery.js" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/libs/jquery_1.11.0/jquery.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/libs/json3_3.2.6/lib/json3.js" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/libs/json3_3.2.6/lib/json3.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/popups/icon-template.html" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/popups/icon-template.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/popups/save-model.html" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/target/classes/static/editor-app/popups/save-model.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/target/classes/static/model/process/processDefinition.js" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/target/classes/static/model/process/processDefinition.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/target/classes/stencilset.json" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/target/classes/stencilset.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/target/classes/templates/model/add.ftl" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/target/classes/templates/model/add.ftl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/target/classes/templates/model/list.ftl" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/target/classes/templates/model/list.ftl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-activiti/target/classes/templates/process/processDefinitionList.ftl" beforeDir="false" afterPath="$PROJECT_DIR$/kst-activiti/target/classes/templates/process/processDefinitionList.ftl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-ams/kst-ams.iml" beforeDir="false" afterPath="$PROJECT_DIR$/kst-ams/kst-ams.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-att/kst-att.iml" beforeDir="false" afterPath="$PROJECT_DIR$/kst-att/kst-att.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-common/kst-common.iml" beforeDir="false" afterPath="$PROJECT_DIR$/kst-common/kst-common.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-common/target/classes/com/kst/common/base/service/impl/BaseService.class" beforeDir="false" afterPath="$PROJECT_DIR$/kst-common/target/classes/com/kst/common/base/service/impl/BaseService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-common/target/classes/com/kst/common/constant/SearchParam.class" beforeDir="false" afterPath="$PROJECT_DIR$/kst-common/target/classes/com/kst/common/constant/SearchParam.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-isms/kst-isms.iml" beforeDir="false" afterPath="$PROJECT_DIR$/kst-isms/kst-isms.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-isms/target/classes/mapping/QuestionMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/kst-isms/target/classes/mapping/QuestionMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-isms/target/classes/templates/document/list.ftl" beforeDir="false" afterPath="$PROJECT_DIR$/kst-isms/target/classes/templates/document/list.ftl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-isms/target/classes/templates/question/addItem.ftl" beforeDir="false" afterPath="$PROJECT_DIR$/kst-isms/target/classes/templates/question/addItem.ftl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-isms/target/classes/templates/question/detail.ftl" beforeDir="false" afterPath="$PROJECT_DIR$/kst-isms/target/classes/templates/question/detail.ftl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-isms/target/classes/templates/question/list.ftl" beforeDir="false" afterPath="$PROJECT_DIR$/kst-isms/target/classes/templates/question/list.ftl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-log/kst-log.iml" beforeDir="false" afterPath="$PROJECT_DIR$/kst-log/kst-log.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-log/target/classes/templates/sys/log/list.ftl" beforeDir="false" afterPath="$PROJECT_DIR$/kst-log/target/classes/templates/sys/log/list.ftl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-web/kst-web.iml" beforeDir="false" afterPath="$PROJECT_DIR$/kst-web/kst-web.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-web/target/classes/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/kst-web/target/classes/application-dev.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst-web/target/classes/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/kst-web/target/classes/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kst.iml" beforeDir="false" afterPath="$PROJECT_DIR$/kst.iml" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>EntityWrapper</find>
+      <find>selected</find>
+      <find>clickToSelect</find>
+      <find>bootstrapTable</find>
+      <find>changeColor</find>
+      <find>toastr</find>
+      <find>re_load</find>
+      <find>applyTable</find>
+      <find>info</find>
+      <find>apply1</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>QueryWrapper</replace>
+    </replaceStrings>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1SYHsCYVBJJr67Aicf1RUcSzMHT" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+    <ConfirmationsSetting value="1" id="Remove" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1559545912778" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.kst.sys.mapper" />
+      <recent name="com.kst.sys.api.service" />
+      <recent name="com.kst.sys.service.impl" />
+      <recent name="com.kst.sys.controller" />
+      <recent name="com.kst.sys.api.vo" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\project\isms\10_Engineering(C2)\20_本開発\kst\kst-ams\src\main\resources" />
+      <recent name="D:\project\isms\10_Engineering(C2)\20_本開発\kst\kst-ams\src\main\java\com\kst\ams" />
+      <recent name="D:\project\isms\10_Engineering(C2)\20_本開発\kst\kst-sys\src\main\resources\templates\sys\dict" />
+      <recent name="D:\project\isms\10_Engineering(C2)\20_本開発\kst\kst-sys\src\main\resources\mapping" />
+      <recent name="D:\project\isms\10_Engineering(C2)\20_本開発\kst\kst-isms\src\main\resources" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.KstWebApplication">
+    <configuration name="kst-sys-api [clean]" type="MavenRunConfiguration" factoryName="Maven" temporary="true">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="clean" />
+              </list>
+            </option>
+            <option name="pomFileName" value="pom.xml" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$/kst-sys-api" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
+    </configuration>
+    <configuration name="kst-sys-api [install]" type="MavenRunConfiguration" factoryName="Maven" temporary="true">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="install" />
+              </list>
+            </option>
+            <option name="pomFileName" value="pom.xml" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$/kst-sys-api" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
+    </configuration>
+    <configuration name="KstWebApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="kst-web" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.kst.KstWebApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Maven.kst-sys-api [install]" />
+        <item itemvalue="Maven.kst-sys-api [clean]" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration" cleanupOnStartRun="true">
+    <configuration>C:\Users\yt-wsx\AppData\Roaming\Subversion</configuration>
+    <supportedVersion>125</supportedVersion>
+  </component>
+  <component name="SvnFileUrlMappingImpl">
+    <option name="myMappingRoots">
+      <list>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="D:\project\isms\20_本開発\30_Source\kst" />
+          <option name="myCopyRoot" value="D:\project\isms\20_本開発\30_Source\kst" />
+        </SvnCopyRootSimple>
+      </list>
+    </option>
+    <option name="myMoreRealMappingRoots">
+      <list>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="D:\project\isms\20_本開発\30_Source\kst" />
+          <option name="myCopyRoot" value="D:\project\isms\20_本開発\30_Source\kst" />
+        </SvnCopyRootSimple>
+      </list>
+    </option>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c2cdc0af-c895-439b-8140-fb8d8ec59249" name="Default Changelist" comment="" />
+      <created>1559538164810</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1559538164810</updated>
+      <workItem from="1559538167790" duration="5050000" />
+      <workItem from="1562200478267" duration="403000" />
+      <workItem from="1562200948668" duration="155000" />
+      <workItem from="1562201556441" duration="8688000" />
+      <workItem from="1571733816324" duration="296000" />
+      <workItem from="1571734289763" duration="57000" />
+      <workItem from="1571734372906" duration="122000" />
+      <workItem from="1571734496592" duration="2449000" />
+      <workItem from="1571736971718" duration="288000" />
+      <workItem from="1571737276342" duration="335000" />
+      <workItem from="1571737626909" duration="481000" />
+    </task>
+    <task id="LOCAL-00001">
+      <created>1562203301890</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1562203301890</updated>
+    </task>
+    <task id="LOCAL-00002">
+      <created>1562208778559</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1562208778559</updated>
+    </task>
+    <task id="LOCAL-00003">
+      <created>1562208896747</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1562208896747</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/kst-web/src/main/java/com/kst/KstWebApplication.java</url>
+          <line>19</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

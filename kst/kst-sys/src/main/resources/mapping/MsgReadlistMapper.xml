@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.sys.mapper.MsgReadlistMapper">
+
+    <resultMap type="com.kst.sys.api.entity.MsgReadlist" id="msgReadlistType">
+        <id property="id" column="id"/>
+        <result property="msgId" column="msg_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="msgReadDate" column="msg_read_date"/>
+    </resultMap>
+
+    <insert id="insertMsgReadList" parameterType="java.util.Map">
+        insert into sys_msg_readlist(id,msg_id,user_id,msg_read_date) values(#{id},#{msgId},#{userId},#{msgReadDate})
+    </insert>
+
+    <update  id="updateMsgReadList" parameterType="com.kst.sys.api.entity.MsgReadlist">
+        update sys_msg_readlist set msg_read_date=#{msgReadDate} where msg_id=#{msgId} and user_id=#{userId}
+    </update>
+
+    <delete id="deleteMsgReadList"  parameterType="com.kst.sys.api.entity.MsgReadlist">
+        delete from sys_msg_readlist where msg_id=#{msgId} and user_id=#{userId}
+    </delete>
+
+</mapper>

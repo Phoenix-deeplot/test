@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/kst.iml" filepath="$PROJECT_DIR$/kst.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kst-activiti/kst-activiti.iml" filepath="$PROJECT_DIR$/kst-activiti/kst-activiti.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kst-ams/kst-ams.iml" filepath="$PROJECT_DIR$/kst-ams/kst-ams.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kst-common/kst-common.iml" filepath="$PROJECT_DIR$/kst-common/kst-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kst-isms/kst-isms.iml" filepath="$PROJECT_DIR$/kst-isms/kst-isms.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kst-log/kst-log.iml" filepath="$PROJECT_DIR$/kst-log/kst-log.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kst-sys/kst-sys.iml" filepath="$PROJECT_DIR$/kst-sys/kst-sys.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kst-sys-api/kst-sys-api.iml" filepath="$PROJECT_DIR$/kst-sys-api/kst-sys-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kst-web/kst-web.iml" filepath="$PROJECT_DIR$/kst-web/kst-web.iml" />
+    </modules>
+  </component>
+</project>

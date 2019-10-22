@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.ams.mapper.AssetExamineDetailMapper">
+    <!-- 这儿定义一个resultMap -->
+
+    <resultMap type="com.kst.ams.entity.AssetExamineDetail" id="assetExamineMap">
+        <id property="id" column="id"/>
+        <result property="no" column="EXAMINE_NO"/>
+        <result property="assetNo" column="asset_No"/>
+        <result property="name" column="name"/>
+        <result property="examineDate" column="EXAMINE_DATE"/>
+        <result property="examinerId" column="EXAMINER_ID"/>
+        <result property="examineResultId" column="EXAMINERESULT_ID"/>
+        <result property="reasonTxt" column="reason_txt"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+    <select id="selectAssetExamineDetailPage" parameterType="com.kst.common.base.vo.DataTable"
+            resultMap="assetExamineMap">
+        select d.*,ams_getAssetName(d.asset_no) as name from ams_asset_examine_detail d
+        left join ams_asset_info i on d.asset_no=i.asset_input_no where d.del_flag=false and EXAMINE_NO=#{searchParams.EXAMINE_NO}
+        <if test='searchParams.asset_no!="" and searchParams.asset_no!=null'>
+          and d.asset_no like CONCAT( '%','${searchParams.asset_no}', '%')
+        </if>
+        <if test='searchParams.location_id!="" and searchParams.location_id!=null'>
+          and i.location_id=#{searchParams.location_id}
+        </if>
+        <if test='searchParams.examineResult_id!="" and searchParams.examineResult_id!=null'>
+          and examineResult_id =#{searchParams.examineResult_id}
+        </if>
+        order by d.asset_no asc
+        limit #{searchParams.startNo} , #{pageSize}
+    </select>
+
+    <select id="selectAssetExamineDetailTotal" parameterType="com.kst.common.base.vo.DataTable"
+            resultType="java.lang.Integer">
+      select count(*) from ams_asset_examine_detail d
+        left join ams_asset_info i on d.asset_no=i.asset_input_no where d.del_flag=false and EXAMINE_NO=#{searchParams.EXAMINE_NO}
+        <if test='searchParams.asset_no!="" and searchParams.asset_no!=null'>
+            and d.asset_no like CONCAT( '%','${searchParams.asset_no}', '%')
+        </if>
+        <if test='searchParams.location_id!="" and searchParams.location_id!=null'>
+            and i.location_id=#{searchParams.location_id}
+        </if>
+        <if test='searchParams.examineResult_id!="" and searchParams.examineResult_id!=null'>
+            and examineResult_id =#{searchParams.examineResult_id}
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.ams.mapper.AssetApplyMapper">
+    <!-- 这儿定义一个resultMap -->
+
+    <resultMap type="com.kst.ams.vo.AssetApplyVO" id="assetApplyMap">
+        <id property="id" column="id"/>
+        <result property="applyId" column="APPLY_ID"/>
+        <result property="no" column="no"/>
+        <result property="applyDate" column="APPLY_DATE"/>
+        <result property="name" column="name"/>
+        <result property="returnDate" column="STORAGE_DATE"/>
+        <result property="moreInfo" column="MORE_INFO"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="applyStatus" column="apply_userId"/>
+    </resultMap>
+
+    <select id="selectAssetApplyByStatus" parameterType="com.kst.common.base.vo.DataTable" resultMap="assetApplyMap">
+        select
+        a.*,ams_getAssetName(a.no) as name
+        from ams_asset_apply a
+        left join ams_asset_info b on a.no = b.asset_input_no where a.del_flag=false
+        <if test='searchParams.asset_input_no!="" and searchParams.asset_input_no!=null'>
+            and b.asset_input_no like CONCAT( '%','${searchParams.asset_input_no}', '%')
+        </if>
+        <if test='searchParams.status_property!="" and searchParams.status_property!=null'>
+            <if test="searchParams.status_property==1">
+                and b.apply_userid is not null
+            </if>
+            <if test="searchParams.status_property==2">
+                and b.apply_userid is null
+            </if>
+        </if>
+        order by a.update_date desc,b.asset_input_no asc,APPLY_DATE desc,isnull(RETURN_DATE) desc,RETURN_DATE desc
+        limit #{searchParams.startNo} , #{pageSize}
+    </select>
+
+    <select id="selectAssetApplyCountByStatus" resultType="java.lang.Integer" parameterType="com.kst.common.base.vo.DataTable">
+        select
+        count(*)
+        from ams_asset_apply a
+        left join ams_asset_info b on a.no = b.asset_input_no where a.del_flag=false
+        <if test='searchParams.asset_input_no!="" and searchParams.asset_input_no!=null'>
+            and b.asset_input_no like CONCAT( '%','${searchParams.asset_input_no}', '%')
+        </if>
+        <if test='searchParams.status_property!="" and searchParams.status_property!=null'>
+          <if test="searchParams.status_property==1">
+              and b.apply_userid is not null
+          </if>
+          <if test="searchParams.status_property==2">
+              and b.apply_userid is null
+          </if>
+        </if>
+    </select>
+
+</mapper>

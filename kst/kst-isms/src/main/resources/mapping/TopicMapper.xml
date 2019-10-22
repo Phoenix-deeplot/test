@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.isms.mapper.TopicMapper">
+    <!-- 这儿定义一个resultMap -->
+
+    <resultMap type="com.kst.isms.entity.Topic" id="topicMap">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="status" column="status"/>
+        <result property="questionTypes" column="question_types"/>
+        <result property="questionScores" column="question_scores"/>
+        <result property="questionCounts" column="question_counts"/>
+        <result property="questionAmounts" column="question_amounts"/>
+        <result property="qualifiedScore" column="qualified_score"/>
+        <result property="releaseDate" column="release_date"/>
+        <result property="automationFlag" column="automation_flag"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="showFlag" column="show_flag"/>
+    </resultMap>
+
+    <resultMap type="com.kst.sys.api.vo.UserVO" id="UserMap">
+        <id property="id" column="id"/>
+        <result property="loginName" column="login_name"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="tel" column="tel"/>
+        <result property="email" column="email"/>
+        <result property="password"  column="password"/>
+        <result property="salt"  column="salt"/>
+        <result property="locked" column="locked"/>
+        <result property="disableFlag" column="disable_flag"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="icon" column="icon" />
+        <result property="organizationName" column="organization_name"/>
+    </resultMap>
+
+    <select id="selectTopicPage" resultMap="topicMap" parameterType="com.kst.common.base.vo.DataTable" >
+        select t.* from isms_topic t
+        left join  isms_user_topic ut on t.id= ut.topic_id
+        where ut.user_id=#{searchParams.id} and t.status=2 and t.del_flag=0
+        <if test="searchParams.name!=null and searchParams.name!=''">
+          and t.name like CONCAT( '%','${searchParams.name}', '%')
+        </if>
+        <if test="searchParams.type!=null and searchParams.type>0">
+          and t.type=#{searchParams.type}
+        </if>
+        limit #{searchParams.startNo},#{pageSize}
+
+    </select>
+
+    <select id="selectTopicTotal" resultType="java.lang.Integer" parameterType="com.kst.common.base.vo.DataTable" >
+        select count(*) from isms_topic t
+        left join  isms_user_topic ut on t.id= ut.topic_id
+        where ut.user_id=#{searchParams.id} and t.status=2 and t.del_flag=0
+        <if test="searchParams.name!=null and searchParams.name!=''">
+            and t.name like CONCAT( '%','${searchParams.name}', '%')
+        </if>
+        <if test="searchParams.type!=null and searchParams.type>0">
+            and t.type=#{searchParams.type}
+        </if>
+    </select>
+
+    <insert id="insertUserTopic">
+        insert into isms_user_topic(user_id,topic_id) value(#{userId},#{topicId})
+    </insert>
+
+    <delete id="deleteUserTopic">
+        delete from isms_user_topic where topic_id=#{topicId} and user_id=#{userId}
+    </delete>
+
+    <select id="selectUserTopic" resultMap="UserMap" parameterType="java.lang.Long" >
+        select u.*,o.name as organization_name from sys_user u left join isms_user_topic ut on u.id=ut.user_id
+        left join sys_organization_user ou on ou.user_id=u.id
+        left join sys_organization o on o.id=ou.organization_id
+        where topic_id=#{_parameter}
+    </select>
+    
+    <select id="selectFinishUserTopic" resultType="java.lang.Integer" parameterType="java.lang.Long" >
+      select count(distinct te.user_id) from isms_user_topic uto
+      inner join isms_user_test te on uto.user_id=te.user_id  where te.topic_id=uto.topic_id and uto.topic_id =#{_parameter}
+    </select>
+
+    <select id="selectUserIds" parameterType="java.lang.Long" resultType="java.lang.Long">
+        select user_id from isms_user_topic where topic_id=#{topicId}
+    </select>
+
+</mapper>

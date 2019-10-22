@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.ams.mapper.DivideMapper">
+    <!-- 这儿定义一个resultMap -->
+
+    <resultMap type="com.kst.ams.entity.Divide" id="divideMap">
+        <id property="id" column="id"/>
+        <result property="assetNo" column="asset_no"/>
+        <result property="divideYymm" column="divide_yymm"/>
+        <result property="monthProvision" column="month_provision"/>
+        <result property="provisionValue" column="provision_value"/>
+        <result property="provisionAllValue" column="provision_all_value"/>
+        <result property="balanceValue" column="balance_value"/>
+        <result property="residualFlag" column="residual_flag"/>
+        <result property="moreInfo" column="more_info"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+    <resultMap id="depreciationMap" type="com.kst.ams.vo.DepreciationVO">
+        <result property="buyDate" column="buydate"/>
+        <result property="assetInputNo" column="asset_input_no"/>
+        <result property="name" column="name"/>
+        <result property="classifyName" column="label"/>
+        <result property="price" column="price"/>
+        <result property="amount" column="amount"/>
+        <result property="netWorth" column="net_worth"/>
+        <result property="residualPrice" column="residual_price"/>
+        <result property="useLife" column="uselife"/>
+        <result property="monthProvision" column="month_provision"/>
+        <result property="provisionValue" column="provision_value"/>
+        <result property="provisionAllValue" column="provision_all_value"/>
+        <result property="balanceValue" column="balance_value"/>
+        <result property="reservescrapDate" column="reservescrap_date"/>
+    </resultMap>
+
+    <select id="selectPassDivideByYymm" resultMap="divideMap" parameterType="java.util.Map">
+        select * from ams_divide where cast(divide_yymm as decimal)&lt;#{yymm} and asset_no=#{assetNo} and del_flag=false
+    </select>
+
+    <select id="selectuFtureDivideByYymm" resultMap="divideMap" parameterType="java.util.Map">
+        select * from ams_divide where cast(divide_yymm as decimal)&gt;#{yymm} and asset_no=#{assetNo} and del_flag=false
+    </select>
+
+    <select id="selectDepreciationList" resultMap="depreciationMap" parameterType="java.util.Map" >
+        select a.*,d.provision_value,d.month_provision,d.provision_all_value,d.balance_value,sd.label
+         from ams_asset_info a
+         left join ams_divide d on a.asset_input_no=d.asset_no
+         left join sys_dict sd on sd.value=a.classify_id
+        where d.divide_yymm=#{yymm} and d.del_flag=false and sd.type='ams_asset_type'
+        order by a.buydate asc ,a.asset_input_no asc
+    </select>
+
+</mapper>

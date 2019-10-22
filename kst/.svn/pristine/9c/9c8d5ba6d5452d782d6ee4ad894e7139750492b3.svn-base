@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.sys.mapper.CalandarMapper">
+    <resultMap type="com.kst.sys.api.vo.CalandarVO" id="calandarMap">
+        <id property="id" column="id"/>
+        <result property="calFlg" column="cal_flg"/>
+        <result property="calDate" column="cal_date"/>
+        <result property="calContent" column="cal_content"/>
+        <result property="calWorkflg" column="cal_workflg"/>
+        <result property="workFal" column="workFal"/>
+    </resultMap>
+    <select id="selectCalandarByPage" resultMap="calandarMap" parameterType="com.kst.common.base.vo.DataTable">
+        SELECT *,sys_getDictLable('att_cal_date',cal_workflg) workFal FROM kst.sys_calandar where 1=1
+        <if test='searchParams.calWorkflg!=null and searchParams.calWorkflg!=""'>
+            and cal_workflg = #{searchParams.calWorkflg}
+        </if>
+        <if test='searchParams.calDate!=null and searchParams.calDate!=""'>
+            and cal_date = #{searchParams.calDate}
+        </if>
+        and del_flag = false
+        limit #{searchParams.startNo},#{pageSize}
+    </select>
+
+    <select id="selectCalandarTotal" resultType="java.lang.Integer" parameterType="com.kst.common.base.vo.DataTable" >
+        SELECT count(*) FROM kst.sys_calandar where 1=1
+        <if test='searchParams.calWorkflg!=null and searchParams.calWorkflg!=""'>
+            and cal_workflg = #{searchParams.calWorkflg}
+        </if>
+        <if test='searchParams.calDate!=null and searchParams.calDate!=""'>
+            and cal_date = #{searchParams.calDate}
+        </if>
+        and del_flag = false
+    </select>
+    <select id="selectCalandarByMap" resultMap="calandarMap" parameterType="java.util.Map">
+        <if test='id!=null and id!="" '>
+            SELECT * FROM kst.sys_calandar where id = #{id}
+        </if>
+    </select>
+</mapper>

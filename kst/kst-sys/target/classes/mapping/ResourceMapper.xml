@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.sys.mapper.ResourceMapper">
+
+    <resultMap type="com.kst.sys.api.vo.ResourceVO" id="resourceMap">
+        <id property="id" column="id"/>
+        <result property="typeId" column="type_id"/>
+        <result property="url" column="url"/>
+        <result property="name" column="name"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="fileType" column="file_type"/>
+        <result property="fileCreateDate" column="file_create_date"/>
+        <result property="fileUpdateDate" column="file_update_date"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="typeName" column="label"/>
+    </resultMap>
+
+
+    <select id="selectResource" resultMap="resourceMap" parameterType="java.util.Map">
+      select  r.* from sys_directory d
+      inner join sys_directory_resource dr on d.id=dr.directory_id
+      inner join sys_resource r on dr.resource_id=r.id where r.id=#{id}
+    </select>
+
+    <select id="selectResourcePage" parameterType="com.kst.common.base.vo.DataTable" resultMap="resourceMap" >
+        select  r.*,d.label
+        from sys_directory_resource dr
+        inner join sys_resource r on r.id=dr.resource_id
+        left join sys_dict d on d.value=r.type_id
+        where r.del_flag=0 and (d.type='sys_rescource_category' or d.type is null)
+        <if test='searchParams.id!="" and searchParams.id!=null'>
+            and dr.directory_id=#{searchParams.id}
+        </if>
+        <if test='searchParams.typeId!="" and searchParams.typeId!=null'>
+            and r.type_id=#{searchParams.typeId}
+        </if>
+        <if test='searchParams.name!="" and searchParams.name!=null'>
+            and name like  CONCAT( '%','${searchParams.name}', '%')
+        </if>
+        <if test='searchParams.fileType!="" and searchParams.fileType!=null '>
+            and file_type like CONCAT( '%','${searchParams.fileType}', '%')
+        </if>
+        limit #{searchParams.startNo} , #{pageSize}
+    </select>
+
+    <select id="selectResourceByPageTotal" resultType="java.lang.Integer" parameterType="com.kst.common.base.vo.DataTable">
+      select count(*)
+        from sys_directory_resource dr
+        inner join sys_resource r on r.id=dr.resource_id
+        left join sys_dict d on d.value=r.type_id
+        where r.del_flag=0 and (d.type='sys_rescource_category' or d.type is null)
+        <if test='searchParams.id!="" and searchParams.id!=null'>
+            and dr.directory_id=#{searchParams.id}
+        </if>
+        <if test='searchParams.typeId!="" and searchParams.typeId!=null'>
+            and r.type_id=#{searchParams.typeId}
+        </if>
+        <if test='searchParams.name!="" and searchParams.name!=null'>
+            and name like  CONCAT( '%','${searchParams.name}', '%')
+        </if>
+        <if test='searchParams.fileType!="" and searchParams.fileType!=null '>
+            and file_type like CONCAT( '%','${searchParams.fileType}', '%')
+        </if>
+    </select>
+</mapper>
+

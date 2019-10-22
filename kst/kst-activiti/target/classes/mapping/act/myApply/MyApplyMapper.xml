@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kst.activiti.mapper.MyApplyMapper">
+
+	<resultMap type="com.kst.activiti.vo.MyApplyVO" id="myApplyMap">
+		<id property="id" column="id"/>
+		<result property="flowId" column="flow_id"/>
+		<result property="name" column="name"/>
+		<result property="applyer" column="applyer"/>
+		<result property="applyStatus" column="apply_status"/>
+		<result property="assetPrice" column="asset_price"/>
+		<result property="createBy" column="create_by"/>
+		<result property="createDate" column="create_date"/>
+		<result property="updateBy" column="update_by"/>
+		<result property="updateDate" column="update_date"/>
+		<result property="remarks" column="remarks"/>
+		<result property="delFlag" column="del_flag"/>
+	</resultMap>
+	<!--表名 -->
+	<sql id="tableName">
+		act_asset_apply_workflow
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		id,
+		flow_id,
+		name,
+		filename,
+		applyer,
+		apply_status,
+		asset_price,
+		create_date,
+		create_by,
+		update_date,
+		update_by,
+		remarks,
+		del_flag
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{id},
+		#{flowId},
+		#{name},
+		#{applyer},
+		#{applyStatus},
+		#{assetPrice},
+		#{createDate},
+		#{createBy},
+		#{updateDate},
+		#{updateBy},
+		#{remarks},
+		#{delFlag}
+	</sql>
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="com.kst.common.base.vo.DataTable">
+		insert into 
+	<include refid="tableName"></include>
+		(
+	<include refid="Field"></include>
+		) values (
+	<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="com.kst.common.base.vo.DataTable">
+		delete from
+		<include refid="tableName"></include>
+		where
+		id = #{id}
+	</delete>
+	<!-- 修改 -->
+	<update id="edit" parameterType="com.kst.common.base.vo.DataTable">
+		update
+		<include refid="tableName"></include>
+		set 
+			TYPE = #{TYPE},
+			STARTTIME = #{STARTTIME},
+			ENDTIME = #{ENDTIME},
+			WHENLONG = #{WHENLONG},
+			REASON = #{REASON},
+		MYLEAVE_ID = MYLEAVE_ID
+		where 
+		id = #{id}
+	</update>
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="com.kst.common.base.vo.DataTable" resultMap="myApplyMap">
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where
+			id = #{id}
+		limit #{searchParams.startNo} , #{pageSize}
+	</select>
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="com.kst.common.base.vo.DataTable" resultMap="myApplyMap">
+		select
+			l.id,
+			l.flow_id,
+			l.name,
+			l.filename,
+			l.applyer,
+			l.apply_status,
+			l.asset_price
+		from 
+		<include refid="tableName"></include> l
+		limit #{searchParams.startNo} , #{pageSize}
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from
+		<include refid="tableName"></include>
+		where 
+			MYLEAVE_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+</mapper>

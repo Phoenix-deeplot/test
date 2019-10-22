@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.ams.mapper.ChartMapper">
+    <!-- 这儿定义一个resultMap -->
+    <select id="selectPieData" resultType="com.kst.ams.vo.ChartVO" parameterType="java.util.Map">
+
+select classifyName,sum(price) as price,sum(amount) as amount,sum(dividePrice) as dividePrice from
+        ((select
+        sys_getDictLable('ams_asset_type',classify_id) as classifyName,
+        sum(price) as price,
+        0 as dividePrice,
+        sum(amount) as amount
+        from ams_asset_info
+        where price is not null
+        and del_flag=false
+        and status_property!='3'
+        and divide_flag=false
+        and buydate&lt;=#{selectDate} group by classify_id)
+            union all
+        (select sys_getDictLable('ams_asset_type',i.classify_id) as classifyName,
+        sum(d.balance_value) as price,
+        sum(d.provision_value) as dividePrice,
+        sum(i.amount) as amount
+        from ams_asset_info i left join ams_divide d on i.asset_input_no=d.asset_no
+            where i.divide_flag=true
+            and i.del_flag=false
+            and d.del_flag=false
+            and i.status_property!='3'
+            and divide_yymm=#{yymm} group by i.classify_id))t
+            group by classifyName
+    </select>
+
+    <select id="selectDivideAssetPricePieData">
+        select sys_getDictLable('ams_asset_type',i.classify_id) as classifyName,
+        sum(d.provision_value) as price,
+        sum(i.amount) as amount
+        from ams_asset_info i left join ams_divide d on i.asset_input_no=d.asset_no
+            where i.divide_flag=true
+            and i.del_flag=false
+            and d.del_flag=false
+            and i.status_property!='3'
+            and divide_yymm=#{yymm} group by i.classify_id
+    </select>
+
+    <select id="selectUseRatio" parameterType="java.util.Map" resultType="com.kst.ams.vo.ChartVO">
+        select sum(case when ams_getSoftCount(i.asset_input_no,#{selectDate}) >0 then
+        ams_getSoftCount(i.asset_input_no,#{selectDate}) else
+        ams_getIsApply(i.asset_input_no,#{selectDate})
+        end) as useCount,sum(i.amount) as amount,sys_getDictLable('ams_asset_type',i.classify_id) as classifyName,i.classify_id as classifyId
+        from ams_asset_info i where buydate &lt;=#{selectDate} group by i.classify_id
+    </select>
+
+    <select id="selectDivideAssetOnLastYear" resultType="com.kst.ams.vo.ChartVO" parameterType="java.util.Map">
+    select mon as yymm,IFNULL(BB.price,0) as price,
+      IFNULL(BB.amount,0) as amount
+     from
+    (select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -11 MONTH)),'%Y%m') as mon
+    union all
+    select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -10 MONTH)),'%Y%m') as mon
+    union all
+    select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -9 MONTH)),'%Y%m') as mon
+    union all
+    select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -8 MONTH)),'%Y%m') as mon
+    union all
+    select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -7 MONTH)),'%Y%m') as mon
+    union all
+    select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -6 MONTH)),'%Y%m') as mon
+    union all
+    select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -5 MONTH)),'%Y%m') as mon
+    union all
+    select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -4 MONTH)),'%Y%m') as mon
+    union all
+    select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -3 MONTH)),'%Y%m') as mon
+    union all
+    select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -2 MONTH)),'%Y%m') as mon
+    union all
+    select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -1 MONTH)),'%Y%m') as mon
+    union all
+    select DATE_FORMAT(#{selectDate},'%Y%m') as mon) AA
+    left join
+    (
+    select sum(balance_value) as price,sum(i.amount) as amount,divide_yymm from ams_divide d
+    left join ams_asset_info i on d.asset_no=i.asset_input_no
+    where cast(divide_yymm as decimal) and i.classify_id=#{classifyId} and d.residual_flag=false
+    group by divide_yymm
+    ) BB
+    on AA.mon=BB.divide_yymm order by mon asc
+    </select>
+
+    <select id="selectAssetByLastYear" resultType="com.kst.ams.vo.ChartVO" parameterType="java.util.Map">
+        select mon as yymm,IFNULL(sum(price),0) as price,IFNULL(sum(amount),0) as amount
+        from
+        (select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -11 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -10 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -9 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -8 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -7 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -6 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -5 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -4 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -3 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -2 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL -1 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT(#{selectDate},'%Y%m') as mon) AA
+        left join
+        ams_asset_info i
+        on DATE_FORMAT(i.buydate,'%Y%m')&lt;=AA.mon
+        where i.del_flag=false and
+        i.divide_flag=false and
+        classify_id=#{classifyId}
+        group by mon order by mon asc;
+    </select>
+
+    <select id="selectAssetByNextYear" resultType="com.kst.ams.vo.ChartVO" parameterType="java.util.Map">
+        <if test="type==1">
+            select mon as yymm,IFNULL(sum(price),0) as price,IFNULL(sum(amount),0) as
+            amount,sys_getDictLable('ams_asset_type',i.classify_id) as classifyName
+        </if>
+        <if test="type==2">
+            select mon as yymm,IFNULL(sum(provision_value),0) as price,
+            IFNULL(sum(amount),0) as amount,sys_getDictLable('ams_asset_type',i.classify_id) as classifyName
+        </if>
+        from
+        (select DATE_FORMAT(#{selectDate},'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL +1 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL +2 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL +3 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL +4 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL +5 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL +6 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL +7 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL +8 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL +9 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT( (DATE_ADD(#{selectDate},INTERVAL +10 MONTH)),'%Y%m') as mon
+        union all
+        select DATE_FORMAT((DATE_ADD(#{selectDate},INTERVAL +11 MONTH)),'%Y%m') as mon) AA
+        left join
+        <if test="type==1">
+            ams_asset_info i
+            on DATE_FORMAT(i.reservescrap_date,'%Y%m')=AA.mon
+            where i.del_flag=false
+            and classify_id=#{classifyId}
+            group by mon order by mon asc
+        </if>
+        <if test="type==2">
+            ams_divide d
+            on divide_yymm=AA.mon left join ams_asset_info i on i.asset_input_no=d.asset_no
+            where d.del_flag=false
+            and classify_id=#{classifyId}
+            group by mon order by mon asc;
+        </if>
+    </select>
+
+</mapper>

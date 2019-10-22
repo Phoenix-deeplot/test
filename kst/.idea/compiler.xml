@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="kst-isms" />
+        <module name="kst-ams" />
+        <module name="kst-sys-api" />
+        <module name="kst-att" />
+        <module name="kst-log" />
+        <module name="kst-common" />
+        <module name="kst-activiti" />
+        <module name="kst-pjs" />
+        <module name="kst-sys" />
+        <module name="kst-web" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="kst" target="1.8" />
+      <module name="kst-activiti" target="1.8" />
+      <module name="kst-ams" target="1.8" />
+      <module name="kst-att" target="1.8" />
+      <module name="kst-common" target="1.8" />
+      <module name="kst-isms" target="1.8" />
+      <module name="kst-log" target="1.8" />
+      <module name="kst-pjs" target="1.8" />
+      <module name="kst-sys" target="1.8" />
+      <module name="kst-sys-api" target="1.8" />
+      <module name="kst-web" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="kst-activiti" options="-parameters" />
+      <module name="kst-ams" options="-parameters" />
+      <module name="kst-att" options="-parameters" />
+      <module name="kst-common" options="-parameters" />
+      <module name="kst-isms" options="-parameters" />
+      <module name="kst-log" options="-parameters" />
+      <module name="kst-pjs" options="-parameters" />
+      <module name="kst-sys" options="-parameters" />
+      <module name="kst-sys-api" options="-parameters" />
+      <module name="kst-web" options="-parameters" />
+    </option>
+  </component>
+</project>

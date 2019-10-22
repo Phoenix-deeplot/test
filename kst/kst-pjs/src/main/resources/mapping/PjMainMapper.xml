@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.pjs.mapper.PjMainMapper">
+
+    <resultMap type="com.kst.pjs.vo.PjMainVO" id="mainMap">
+        <id property="id" column="id"/>
+        <result property="companyNo" column="pj_company_no"/>
+        <result property="name" column="pj_name"/>
+        <result property="nameS" column="pj_name_s"/>
+        <result property="planFrom" column="pj_plan_from"/>
+        <result property="planTo" column="pj_plan_to"/>
+        <result property="planTimeAll" column="pj_plan_time_all"/>
+        <result property="memo" column="pj_memo"/>
+
+        <result property="factFrom" column="pj_fact_from"/>
+        <result property="factTo" column="pj_fact_to"/>
+        <result property="factTimeAll" column="pj_fact_time_all"/>
+        <result property="status" column="pj_status"/>
+
+        <result property="createBy" column="create_by"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateBy" column="update_id"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+    <select id="selectPjMainByPage" resultMap="mainMap" parameterType="com.kst.common.base.vo.DataTable">
+        select *,sys_getOrganizationName(m.pj_organization_id) as organizationName from pjs_pjmain m left join pjs_pjfactinfo i on m.id=i.pj_id
+        where m.del_flag=false
+        <if test='searchParams.pjName!=null and searchParams.pjName!=""'>
+            and m.pj_name like CONCAT( '%','${searchParams.pjName}', '%')
+        </if>
+        <if test='searchParams.organizationId!=null and searchParams.organizationId!=""'>
+            and m.pj_organization_id=#{searchParams.organizationId}
+        </if>
+        <if test="searchParams.pjStatus!=null and searchParams.pjStatus.size>0">
+            and i.pj_status in
+            <foreach collection="searchParams.pjStatus" item="status" index="index" open="(" close=")" separator=",">
+                #{status}
+            </foreach>
+        </if>
+        order by m.pj_plan_from desc,m.pj_plan_to desc
+        limit #{searchParams.startNo} , #{pageSize}
+    </select>
+
+    <select id="selectPjMainTotal" resultType="java.lang.Integer" parameterType="com.kst.common.base.vo.DataTable">
+        select count(*) from pjs_pjmain m left join pjs_pjfactinfo i on m.id=i.pj_id
+        where m.del_flag=false
+        <if test='searchParams.name!=null and searchParams.name!=""'>
+            and m.pj_name like CONCAT( '%','${searchParams.name}', '%')
+        </if>
+        <if test='searchParams.organizationId!=null and searchParams.organizationId!=""'>
+            and m.pj_organization_id=#{searchParams.organizationId}
+        </if>
+        <if test="searchParams.pjStatus!=null and searchParams.pjStatus.size>=0">
+            and i.pj_status in
+            <foreach collection="searchParams.pjStatus" item="status" index="index" open="(" close=")" separator=",">
+                #{status}
+            </foreach>
+        </if>
+
+    </select>
+
+    <select id="selectPjMainByMap" resultMap="mainMap" parameterType="java.util.Map">
+        select distinct m.* from pjs_project_group g
+        left join pjs_pjmain m on g.pj_id=m.id where g.user_id=#{userId} and m.id is not null;
+    </select>
+
+</mapper>

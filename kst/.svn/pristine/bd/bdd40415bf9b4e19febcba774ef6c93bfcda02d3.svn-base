@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.pjs.mapper.ProjectHistoryMapper">
+
+    <insert id="insertProjectHistory" parameterType="java.util.Map">
+        insert into pjs_project_history
+        (id,pj_id,date,type,
+        plan_finish_day,
+        fact_finish_day,
+        plan_finish_rate,
+        fact_finish_rate,
+        day_deviation_value,create_date,update_date,del_flag)
+        value (#{id},#{pjId},#{date},#{type},#{planFinishDay},#{factFinishDay},#{planFinishRate},#{factFinishRate},#{dayDeviationValue},now(),now(),0)
+    </insert>
+
+</mapper>

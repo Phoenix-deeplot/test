@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.pjs.mapper.PjsUserGroupMapper">
+
+    <resultMap type="com.kst.pjs.entity.PjsUserGroup" id="userGroupMap">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="level" column="level"/>
+        <result property="parentIds" column="parent_ids"/>
+        <result property="sort" column="sort"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="parentName" column="parent_name"/>
+    </resultMap>
+
+    <resultMap id="userMap" type="com.kst.sys.api.vo.UserVO">
+        <id property="id" column="id"/>
+        <result property="loginName" column="login_name"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="tel" column="tel"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
+        <result property="salt" column="salt"/>
+        <result property="locked" column="locked"/>
+        <result property="disableFlag" column="disable_flag"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="icon" column="icon"/>
+        <result property="organizationId" column="organization_id"/>
+        <result property="major" column="major"/>
+        <result property="organizationName" column="organization_name"></result>
+    </resultMap>
+
+    <select id="selectUserGroup" resultMap="userGroupMap" parameterType="java.util.Map" >
+        select a.*,b.name as parentName from pjs_user_group a
+        left join pjs_user_group b on a.parent_id=b.id where a.del_flag=0
+        <if test='id!=null and id!=""'>
+            and a.id=#{id}
+        </if>
+    </select>
+
+    <insert id="insertUserToUserGroup">
+      insert into pjs_user_grouplist(group_id,user_id) value(#{groupId},#{userId})
+    </insert>
+
+    <delete id="deleteUserFromUserGroup">
+        delete from pjs_user_grouplist
+        <where>
+            <if test="groupId!='' and groupId!=null">
+                and group_id=#{groupId}
+            </if>
+            <if test="userId!='' and userId!=null">
+                and user_id=#{userId}
+            </if>
+        </where>
+    </delete>
+
+    <select id="selectMaxId" resultType="java.lang.Long">
+        select case  when max(id) IS NULL then 1 else max(id)+1 end as id from pjs_user_group
+    </select>
+
+    <select id="selectNameIsExist" parameterType="com.kst.pjs.entity.PjsUserGroup" resultType="java.lang.Integer">
+        select count(*)
+        from pjs_user_group
+        where
+        name=#{name} and del_flag=0
+        <choose>
+            <when test='parentId!=null and parentId!=""'>
+                and parent_id=#{parentId}
+            </when>
+            <otherwise>
+                and parent_id is null
+            </otherwise>
+        </choose>
+        <if test='id!=null and id!=""'>
+            and id !=#{id}
+        </if>
+
+    </select>
+
+    <select id="selectUserByPage" resultMap="userMap" parameterType="com.kst.common.base.vo.DataTable">
+      select
+        u.*,gu.group_id as organization_id
+      from sys_user u
+      inner join pjs_user_grouplist gu on u.id=gu.user_id
+      inner join pjs_user_group o on o.id=gu.group_id
+      where u.del_flag=0 and gu.group_id=#{searchParams.id}
+      <if test='searchParams.startNo!=null and searchParams.startNo!=""'>
+          limit #{searchParams.startNo} , #{pageSize};
+      </if>
+    </select>
+
+    <select id="selectUserTotal" resultType="java.lang.Integer" parameterType="com.kst.common.base.vo.DataTable">
+        select
+        count(*)
+      from sys_user u
+      inner join pjs_user_grouplist gu on u.id=gu.user_id
+      inner join pjs_user_group o on o.id=gu.group_id
+      where u.del_flag=0 and gu.group_id=#{searchParams.id}
+    </select>
+
+    <select id="selectUserOfUserGroup" resultMap="userMap" parameterType="java.util.Map">
+        select u.* from sys_user u
+        <if test='groupId!=null and groupId!=""'>
+            where id not in
+            (select u.id from sys_user u left join pjs_user_grouplist ug on u.id=ug.user_id where ug.group_id=#{groupId})
+             and u.del_flag=false
+        </if>
+        <if test="groupIds!=null">
+            left join
+            pjs_user_grouplist ug on u.id=ug.user_id where u.del_flag=false
+            and ug.group_id in
+            <foreach collection="groupIds" item="g" index="index" open="(" close=")" separator=",">
+                #{g}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

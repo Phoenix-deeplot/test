@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.isms.mapper.QuestionMapper">
+    <!-- 这儿定义一个resultMap -->
+
+    <resultMap type="com.kst.isms.vo.QuestionVO" id="questionMap">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="category" column="category"/>
+        <result property="categoryLabel" column="category_label"/>
+        <result property="type" column="type"/>
+        <result property="typeLabel" column="type_label"/>
+        <result property="answer" column="answer"/>
+        <result property="sort" column="sort"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="showFlag" column="show_flag"/>
+        <collection property="questionItems" column="id" select="selectQuestionItem">
+            <id property="id" column="id"/>
+            <result property="questionId" column="question_id"/>
+            <result property="name" column="name"/>
+            <result property="value" column="value"/>
+            <result property="sort" column="sort"/>
+            <result property="createBy" column="create_by"/>
+            <result property="createDate" column="create_date"/>
+            <result property="updateBy" column="update_by"/>
+            <result property="updateDate" column="update_date"/>
+            <result property="remarks" column="remarks"/>
+            <result property="delFlag" column="del_flag"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="selectQuestionItem" parameterType="java.lang.Long" resultType="com.kst.isms.entity.QuestionItem">
+      select * from isms_question_item where question_id=#{_parameter} and del_flag=0 order by sort asc
+    </select>
+
+    <select id="selectQuestionList" resultMap="questionMap" parameterType="com.kst.common.base.vo.DataTable">
+        select distinct q.*,
+        d1.label as category_label,
+        d2.label as type_label from isms_question q
+        left join sys_dict d1 on d1.value=q.category
+        left join sys_dict d2 on d2.value=q.type
+        where q.del_flag=false and d1.type='isms_question_category' and d2.type='isms_question_type'
+        <if test='searchParams.name!="" and searchParams.name!=null'>
+            and q.name like CONCAT( '%','${searchParams.name}', '%')
+        </if>
+        <if test='searchParams.category>0 and searchParams.category!=null'>
+            and q.category =#{searchParams.category}
+        </if>
+        <if test='searchParams.type>0 and searchParams.type!=null'>
+            and q.type =#{searchParams.type}
+        </if>
+        <if test='searchParams.topicId!="" and searchParams.topicId!=null'>
+            and q.id not in (select question_id from isms_topic_question where topic_id=#{searchParams.topicId})
+        </if>
+        <if test='searchParams.ids!=null and searchParams.ids!="" '>
+          and q.type in
+            <foreach item="item" index="index" collection="searchParams.ids.split(',')" open="("
+                     separator="," close=")">
+                ${item}
+            </foreach>
+        </if>
+        limit #{searchParams.startNo} , #{pageSize}
+    </select>
+
+    <select id="selectQuestionTotal" resultType="java.lang.Integer" parameterType="com.kst.common.base.vo.DataTable">
+        select count(*) from isms_question q
+        where del_flag=false
+        <if test='searchParams.name!="" and searchParams.name!=null'>
+            and name like CONCAT( '%','${searchParams.name}', '%')
+        </if>
+        <if test='searchParams.category>0 and searchParams.category!=null'>
+            and category =#{searchParams.category}
+        </if>
+        <if test='searchParams.type>0 and searchParams.type!=null'>
+            and type =#{searchParams.type}
+        </if>
+        <if test='searchParams.topicId!="" and searchParams.topicId!=null'>
+            and q.id not in (select question_id from isms_topic_question where topic_id=#{searchParams.topicId})
+        </if>
+        <if test='searchParams.ids!=null and searchParams.ids!="" '>
+            and q.type in
+            <foreach item="item" index="index" collection="searchParams.ids.split(',')" open="("
+                     separator="," close=")">
+                ${item}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="selectQuestionById" resultMap="questionMap" parameterType="java.lang.Long">
+       select q.*,
+        d1.label as category_label,
+        d2.label as type_label from isms_question q
+        left join sys_dict d1 on d1.value=q.category
+        left join sys_dict d2 on d2.value=q.type where q.del_flag=false and d1.type='isms_question_category' and d2.type='isms_question_type' and q.id=#{_parameter}
+    </select>
+
+    <select id="selectQuestionByTopicId" resultMap="questionMap" parameterType="java.util.Map" >
+        select q.* ,
+        d1.label as category_label,
+        d2.label as type_label from isms_question q
+        <if test="topicId!=0 and topicId!=null">
+            left join isms_topic_question tq on q.id=tq.question_id
+        </if>
+        left join sys_dict d1 on d1.value=q.category
+        left join sys_dict d2 on d2.value=q.type where q.del_flag=false and d1.type='isms_question_category' and d2.type='isms_question_type'
+        <if test="topicId!=0 and topicId!=null">
+            and tq.topic_id=#{topicId}
+        </if>
+        <if test="ids!=null">
+            and q.id in
+            <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by q.type
+    </select>
+
+    <select id="selectIds" resultType="java.lang.String" parameterType="java.lang.Long"  >
+        select id from isms_question where del_flag=false and type=#{id}
+    </select>
+
+    <select id="selectAutoQuestions" resultMap="questionMap" parameterType="java.util.Map"  >
+        select * from isms_question where id in (select ua.question_id from
+        (select * from isms_user_test where user_id=#{userId} and topic_id=#{topicId} ORDER BY create_date asc LIMIT 0, 1 )
+        ut left join isms_user_answer ua on ut.topic_id=ua.topic_id where ua.user_id=#{userId})
+    </select>
+
+
+
+    <insert id="insertTopicQuestion"  >
+        insert into isms_topic_question(topic_id,question_id)
+        values
+        <foreach collection="questions" item="item" index="index" separator="," >
+            (#{topicId},#{item.id})
+        </foreach>
+    </insert>
+
+    <delete id="deleteTopicQuestion" parameterType="java.lang.Long">
+        delete from isms_topic_question where topic_id=#{topicId}
+    </delete>
+
+</mapper>

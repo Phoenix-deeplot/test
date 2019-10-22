@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.ams.mapper.AssetTakeOutMapper">
+    <!-- 这儿定义一个resultMap -->
+
+    <resultMap type="com.kst.ams.vo.AssetTakeOutVO" id="assetTakeOutMap">
+        <id property="id" column="id"/>
+        <result property="no" column="no"/>
+        <result property="name" column="name"/>
+        <result property="applyId" column="TAKEOUT_ID"/>
+        <result property="applyDate" column="TAKEOUT_DATE"/>
+        <result property="returnDate" column="RETURN_DATE"/>
+        <result property="moreInfo" column="MORE_INFO"/>
+
+        <result property="createBy" column="create_by"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="takeOutUserId" column="takeout_userid"/>
+    </resultMap>
+
+
+    <select id="selectTakeOutByStatus" parameterType="com.kst.common.base.vo.DataTable" resultMap="assetTakeOutMap">
+        select
+        a.*,b.name
+        from ams_asset_takeout a
+        left join ams_asset_info b on a.no = b.asset_input_no where a.del_flag=false
+        <if test='searchParams.no!="" and searchParams.no!=null'>
+            and a.no like CONCAT( '%','${searchParams.no}', '%')
+        </if>
+        <if test='searchParams.takeout_userid =="y"'>
+            and b.takeout_userid is not null
+        </if>
+        <if test='searchParams.takeout_userid =="n"'>
+            and b.takeout_userid is null
+        </if>
+        order by a.update_date desc,no asc,TAKEOUT_DATE desc,isnull(return_date) desc,return_date desc
+        limit #{searchParams.startNo} , #{pageSize}
+    </select>
+
+    <select id="selectTakeOutTatolByStatus" resultType="java.lang.Integer" parameterType="com.kst.common.base.vo.DataTable">
+        select
+        count(*)
+        from ams_asset_takeout a
+        left join ams_asset_info b on a.no = b.asset_input_no where a.del_flag=false
+        <if test='searchParams.no!="" and searchParams.no!=null'>
+            and a.no like CONCAT( '%','${searchParams.no}', '%')
+        </if>
+        <if test='searchParams.takeout_userid =="y"'>
+            and b.takeout_userid is not null
+        </if>
+        <if test='searchParams.takeout_userid =="n"'>
+            and b.takeout_userid is null
+        </if>
+    </select>
+
+
+</mapper>

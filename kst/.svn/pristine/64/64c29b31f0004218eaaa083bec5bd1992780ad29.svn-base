@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.sys.mapper.OrganizationMapper">
+
+    <resultMap type="com.kst.sys.api.vo.OrganizationVO" id="organizationMap">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="level" column="level"/>
+        <result property="parentIds" column="parent_ids"/>
+        <result property="sort" column="sort"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="parentName" column="parent_name"/>
+    </resultMap>
+
+    <resultMap id="userMap" type="com.kst.sys.api.vo.UserVO">
+        <id property="id" column="id"/>
+        <result property="loginName" column="login_name"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="tel" column="tel"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
+        <result property="salt" column="salt"/>
+        <result property="locked" column="locked"/>
+        <result property="disableFlag" column="disable_flag"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="icon" column="icon"/>
+        <result property="organizationId" column="organization_id"/>
+        <result property="major" column="major"/>
+        <result property="organizationName" column="organization_name"></result>
+    </resultMap>
+
+    <select id="selectUserVOByPage" resultMap="userMap"  parameterType="com.kst.common.base.vo.DataTable">
+        SELECT u.*,orgu.*,org.*,org.name as organization_name FROM sys_user u
+        left join sys_organization_user orgu on u.id = orgu.user_id
+        left join sys_organization org on organization_id = org.id
+        where org.parent_ids like
+        concat('%,',(SELECT orgu.organization_id FROM sys_user u left join sys_organization_user orgu on u.id = orgu.user_id
+        left join sys_organization org on organization_id = org.id WHERE u.login_name=#{searchParams.loginName}),',%')
+        <if test='searchParams.nickName !=null and searchParams.nickName != ""'>
+            and u.nick_name=#{searchParams.nickName}
+        </if>
+        or org.parent_ids like
+        concat((SELECT orgu.organization_id FROM sys_user u left join sys_organization_user orgu on u.id = orgu.user_id
+        left join sys_organization org on organization_id = org.id WHERE u.login_name=#{searchParams.loginName}),',%')
+
+        and u.del_flag=0
+        <if test='searchParams.delFlag !=null and searchParams.delFlag !=""'>
+            or u.del_flag=#{searchParams.delFlag}
+        </if>
+        limit #{searchParams.startNo},#{pageSize}
+    </select>
+    <select id="selectUserVOTotal" resultType="java.lang.Integer" parameterType="com.kst.common.base.vo.DataTable">
+        SELECT count(*) FROM sys_user u
+        left join sys_organization_user orgu on u.id = orgu.user_id
+        left join sys_organization org on organization_id = org.id
+        where org.parent_ids like
+        concat('%,',(SELECT orgu.organization_id FROM sys_user u left join sys_organization_user orgu on u.id = orgu.user_id
+        left join sys_organization org on organization_id = org.id WHERE u.login_name=#{searchParams.loginName}),',%')
+        or org.parent_ids like
+        concat((SELECT orgu.organization_id FROM sys_user u left join sys_organization_user orgu on u.id = orgu.user_id
+        left join sys_organization org on organization_id = org.id WHERE u.login_name=#{searchParams.loginName}),',%')
+        <if test='searchParams.nickName !=null and searchParams.nickName != ""'>
+            and u.nick_name=#{searchParams.nickName}
+        </if>
+        and u.del_flag=0
+        <if test='searchParams.delFlag !=null and searchParams.delFlag !=""'>
+            or u.del_flag=#{searchParams.delFlag}
+        </if>
+        limit #{searchParams.startNo},#{pageSize}
+
+    </select>
+
+
+
+
+    <select id="selectOrganization" resultMap="organizationMap" parameterType="java.util.Map">
+        select a.*,b.name as 'parent_name' from sys_organization a left join sys_organization b on a.parent_id=b.id
+        where a.del_flag=0
+        <if test='id!=null and id!=""'>
+            and a.id=#{id}
+        </if>
+    </select>
+
+    <select id="selectNameIsExist" parameterType="com.kst.sys.api.entity.Organization" resultType="java.lang.Integer">
+        select count(*)
+        from sys_organization
+        where
+        name=#{name} and del_flag=0
+        <choose>
+            <when test='parentId!=null and parentId!=""'>
+                and parent_id=#{parentId}
+            </when>
+            <otherwise>
+                and parent_id is null
+            </otherwise>
+        </choose>
+        <if test='id!=null and id!=""'>
+            and id !=#{id}
+        </if>
+
+    </select>
+
+    <select id="selectUserByPage" resultMap="userMap" parameterType="com.kst.common.base.vo.DataTable">
+      select
+        u.*,ou.organization_id
+      from sys_user u
+      inner join sys_organization_user ou on u.id=ou.user_id
+      inner join sys_organization o on o.id=ou.organization_id
+      where u.del_flag=0 and ou.organization_id=#{searchParams.id} limit #{searchParams.startNo} , #{pageSize};
+    </select>
+
+    <select id="selectUserTotal" resultType="java.lang.Integer" parameterType="com.kst.common.base.vo.DataTable">
+        select
+        count(*)
+      from sys_user u
+      inner join sys_organization_user ou on u.id=ou.user_id
+      inner join sys_organization o on o.id=ou.organization_id
+      where u.del_flag=0 and ou.organization_id=#{searchParams.id}
+    </select>
+
+    <select id="selectInorganizationUser" resultMap="userMap">
+        select
+        u.*,ou.organization_id from sys_user u left join sys_organization_user ou on u.id=ou.user_id
+        where ou.organization_id is null and user_id is null
+    </select>
+
+    <insert id="insertUserToOrganization">
+      insert into sys_organization_user(organization_id,user_id) value(#{organizationId},#{userId})
+    </insert>
+
+    <delete id="deleteUserFromOrganization">
+        delete from sys_organization_user
+        <where>
+            <if test="organizationId!='' and organizationId!=null">
+                and organization_id=#{organizationId}
+            </if>
+            <if test="userId!='' and userId!=null">
+                and user_id=#{userId}
+            </if>
+        </where>
+    </delete>
+
+    <select id="selectMaxId" resultType="java.lang.Long">
+        select case  when max(id) IS NULL then 1 else max(id)+1 end as id from sys_organization
+    </select>
+
+    <select id="selectAllUserAndOrgan" resultMap="userMap" parameterType="java.util.List">
+        select
+        u.*,ou.organization_id,o.name as organization_name
+        from sys_user u
+        left join sys_organization_user ou on u.id=ou.user_id
+        left join sys_organization o on o.id=ou.organization_id
+        <where>
+            <if test='userIds!=null'>
+                and u.id in
+                <foreach collection="userIds" item="u" index="index" open="(" close=")" separator=",">
+                    #{u.id}
+                </foreach>
+            </if>
+            <if test="organIds!=null">
+                and o.id in
+                <foreach collection="organIds" item="o" index="index" open="(" close=")" separator=",">
+                    #{o}
+                </foreach>
+            </if>
+        </where>
+
+    </select>
+
+    <select id="selectRootOrganization" resultMap="organizationMap" parameterType="java.lang.Long">
+        select * from sys_organization where id=
+        (select left(o.parent_ids,instr(o.parent_ids,',')-1)
+        from sys_user u
+        inner join sys_organization_user ou on u.id=ou.user_id
+        inner join sys_organization o on o.id=ou.organization_id where u.id=#{id})
+    </select>
+
+</mapper>

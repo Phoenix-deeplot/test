@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.sys.mapper.MsgMapper">
+
+    <resultMap type="com.kst.sys.api.entity.Msg" id="msgMap">
+        <id property="id" column="id"/>
+        <result property="level" column="msg_level"/>
+        <result property="levelLabel" column="levelLabel"/>
+        <result property="title" column="msg_title"/>
+        <result property="detail" column="msg_detail"/>
+        <result property="attachlist" column="msg_attachlist"/>
+        <result property="showFrom" column="msg_showfrom"/>
+        <result property="showTo" column="msg_showto"/>
+        <result property="pushType" column="msg_pushType"/>
+        <result property="pushTypeLabel" column="pushTypeLabel"/>
+        <result property="pushDate" column="msg_pushdate"/>
+        <result property="msgReadDate" column="msg_read_date"/>
+        <result property="url" column="msg_url"/>
+
+        <result property="createBy" column="create_by"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateBy" column="update_id"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+        <collection property="attachs" column="{ids = msg_attachlist}" select="selectResource">
+            <id property="id" column="id"/>
+            <result property="typeId" column="type_id"/>
+            <result property="url" column="url"/>
+            <result property="name" column="name"/>
+            <result property="fileSize" column="file_size"/>
+            <result property="fileType" column="file_type"/>
+            <result property="fileCreateDate" column="file_create_date"/>
+            <result property="fileUpdateDate" column="file_update_date"/>
+        </collection>
+        <collection property="userLists" column="id" select="selectUserByMsgId">
+            <id property="id" column="id"/>
+            <result property="loginName" column="login_name"/>
+            <result property="nickName" column="nick_name"/>
+            <result property="tel" column="tel"/>
+            <result property="email" column="email"/>
+            <result property="password" column="password"/>
+            <result property="salt" column="salt"/>
+            <result property="locked" column="locked"/>
+            <result property="disableFlag" column="disable_flag"/>
+            <result property="remarks" column="remarks"/>
+            <result property="delFlag" column="del_flag"/>
+            <result property="icon" column="icon"/>
+            <result property="organizationId" column="organization_id"/>
+            <result property="major" column="major"/>
+            <result property="organizationName" column="organization_name"></result>
+        </collection>
+    </resultMap>
+
+    <select id="selectUserByMsgId" parameterType="java.lang.Long" resultType="com.kst.sys.api.vo.UserVO">
+      select * from sys_user u left join sys_msg_readlist mr on u.id=mr.user_id where mr.msg_id=#{id}
+    </select>
+
+    <select id="selectResource" parameterType="java.util.Map" resultType="com.kst.sys.api.entity.Resource">
+        select * from sys_resource where id in
+        <foreach collection="ids.split(',')" item="value"
+                 index="index" open="(" close=")" separator=",">
+            #{value}
+        </foreach>
+    </select>
+
+    <select id="selectMsgByPage" resultMap="msgMap" parameterType="com.kst.common.base.vo.DataTable">
+        select distinct m.*,sys_getDictLable('sys_msg_type',msg_level) as levelLabel,
+        sys_getDictLable('sys_push_type',msg_pushType) as pushTypeLabel
+        <if test='searchParams.isNew!=null and searchParams.isNew!=""'>
+          ,mr.msg_read_date as msg_read_date
+        </if>
+        from sys_msg m
+        left join sys_msg_readlist mr on m.id=mr.msg_id
+        where m.del_flag=false
+        <if test='searchParams.title!=null and searchParams.title!=""'>
+            and m.msg_title like CONCAT('%','${searchParams.title}','%')
+        </if>
+        <if test='searchParams.level!=null and searchParams.level!=""'>
+            and m.msg_level =#{searchParams.level}
+        </if>
+        <if test='searchParams.noLevel!=null and searchParams.noLevel!=""'>
+            and m.msg_level !=#{searchParams.noLevel}
+        </if>
+        <if test='searchParams.userId!=null and searchParams.userId !=""'>
+            and mr.user_id=#{searchParams.userId}
+        </if>
+        <if test='searchParams.isNew!=null and searchParams.isNew!=""'>
+            <if test="searchParams.isNew==1">
+                and mr.msg_read_date is null
+            </if>
+            <if test="searchParams.isNew==2">
+                and mr.msg_read_date is not null
+            </if>
+            and ((now() between m.msg_showfrom and  DATE_ADD(m.msg_showto,INTERVAL 1 DAY)) or
+            (m.msg_showfrom is Null and m.msg_showto is Null))
+        </if>
+        order by <if test='searchParams.noLevel!=null and searchParams.noLevel!=""'>m.msg_level desc,</if> m.id
+        limit #{searchParams.startNo},#{pageSize}
+    </select>
+
+    <select id="selectMsgTotal" resultType="java.lang.Integer" parameterType="com.kst.common.base.vo.DataTable" >
+        select count(distinct m.id) from sys_msg m left join sys_msg_readlist mr on m.id=mr.msg_id
+        where m.del_flag=false
+        <if test='searchParams.title!=null and searchParams.title!=""'>
+            and m.msg_title like CONCAT('%','${searchParams.title}','%')
+        </if>
+        <if test='searchParams.level!=null and searchParams.level!=""'>
+            and m.msg_level =#{searchParams.level}
+        </if>
+        <if test='searchParams.noLevel!=null and searchParams.noLevel!=""'>
+            and m.msg_level !=#{searchParams.noLevel}
+        </if>
+        <if test='searchParams.userId!=null and searchParams.userId !=""'>
+            and mr.user_id=#{searchParams.userId}
+        </if>
+        <if test='searchParams.isNew!=null and searchParams.isNew!=""'>
+            <if test="searchParams.isNew==1">
+                and mr.msg_read_date is null
+            </if>
+            <if test="searchParams.isNew==2">
+                and mr.msg_read_date is not null
+            </if>
+            and ((now() between m.msg_showfrom and  DATE_ADD(m.msg_showto,INTERVAL 1 DAY)) or
+            (m.msg_showfrom is Null and m.msg_showto is Null))
+        </if>
+    </select>
+
+    <select id="selectMsgByMap" resultMap="msgMap" parameterType="java.util.Map">
+        select m.*,sys_getDictLable('sys_msg_type',m.msg_level) as levelLabel,sys_getDictLable('sys_push_type',m.msg_level) as pushTypeLabel from sys_msg m
+            <if test='id!=null and id!="" '>
+               where m.del_flag=false and id=#{id}
+            </if>
+            <if test='userId!=null and userId !=""'>
+                left join sys_msg_readlist mr on m.id=mr.msg_id where m.del_flag=false and mr.user_id=#{userId}
+            </if>
+    </select>
+
+    <insert id="insertMsg" parameterType="java.util.Map">
+        insert into sys_msg
+        (id,msg_level,msg_title,msg_detail,msg_showfrom,
+        msg_showto,msg_pushType,msg_pushdate,create_by,create_date,update_by,update_date,del_flag)
+        value (#{id},#{level},#{title},#{detail},#{showFrom},#{showTo},#{pushType},#{pushDate},#{createBy},now(),#{updateBy},now(),0)
+    </insert>
+
+</mapper>

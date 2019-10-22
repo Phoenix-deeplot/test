@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.att.mapper.SignMapper">
+    <resultMap type="com.kst.att.vo.SignVO" id="signMap">
+        <id property="id" column="id"/>
+        <result property="attUserid" column="att_userid"/>
+        <result property="attSigntime" column="att_signtime"/>
+        <result property="attFlag" column="att_flag"/>
+        <result property="attLocname" column="att_locname"/>
+        <result property="attLatitude" column="att_latitude"/>
+        <result property="attLongitude" column="att_longitude"/>
+
+        <result property="beginWork" column="beginWork"/>
+        <result property="endWork" column="endWork"/>
+        <result property="flag" column="flag"/>
+        <result property="turnTime" column="turnTime"/>
+        <result property="outTime" column="outTime"/>
+        <result property="workTime" column="workTime"/>
+        <result property="weekDay" column="weekDay"/>
+        <result property="dateExplain" column="dateExplain"/>
+    </resultMap>
+    <select id="selectAttUserid" resultMap="signMap" parameterType="java.util.Map">
+
+        SELECT att_userid,att_signtime,
+        min(att_signtime) as beginWork,max(att_signtime) as endWork,
+        group_concat(distinct(att_locname)) as att_locname,group_concat(distinct(att_flag)) as att_flag,
+        MOD(HOUR(TIMEDIFF(max(att_signtime),min(att_signtime))), 24) as turnTime,
+        substr((SELECT JSON_EXTRACT(para_json,'$.timeOut') FROM sys_module_para  where para_id = 'gateCard'),2,1) as outTime,
+        if((MOD(HOUR(TIMEDIFF(max(att_signtime),min(att_signtime))), 24)=0),0,(MOD(HOUR(TIMEDIFF(max(att_signtime),min(att_signtime))), 24)-
+        (SELECT JSON_EXTRACT(para_json,'$.timeOut') FROM sys_module_para  where para_id = 'gateCard'))) as workTime
+        FROM att_sign
+        where att_userid=#{attUserid}
+        group by date_format(att_signtime,'%y-%m-%d') order by date_format(att_signtime,'%y-%m-%d')
+    </select>
+
+    <select id="totalTime"  resultType="java.lang.Integer" parameterType="com.kst.common.base.vo.DataTable" >
+        select sum( t.turnTime ) as totalTimes from(
+        SELECT MOD(HOUR(TIMEDIFF(max(att_signtime),min(att_signtime))), 24) as turnTime
+        FROM att_sign
+        where att_userid='QULIN'
+        group by date_format(att_signtime,'%y-%m-%d') order by date_format(att_signtime,'%y-%m-%d')) t
+    </select>
+
+    <insert id="insertSign" parameterType="com.kst.att.entity.Sign" >
+        insert into att_sign (id,att_userid,att_signtime,att_flag,att_locname,att_latitude,att_longitude,create_date,create_by,update_date,update_by,remarks,del_flag)
+        values (#{id},#{attUserid},#{attSigntime},#{attFlag},#{attLocname},#{attLatitude},#{attLongitude},#{createDate},#{createBy},#{updateDate},#{updateBy},#{remarks},#{delFlag})
+    </insert>
+
+</mapper>

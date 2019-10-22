@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.ams.mapper.AssetMoveManageMapper">
+    <!-- 这儿定义一个resultMap -->
+
+    <resultMap type="com.kst.ams.vo.AssetMoveManageVO" id="assetMoveManageMap">
+        <id property="id" column="id"/>
+        <result property="no" column="no"/>
+        <result property="name" column="name"/>
+        <result property="locationId" column="LOCATION_ID"/>
+        <result property="storageDate" column="STORAGE_DATE"/>
+        <result property="removeDate" column="DELETE_DATE"/>
+        <result property="moreInfo" column="MORE_INFO"/>
+
+        <result property="createBy" column="create_by"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="status" column="status_property"/>
+    </resultMap>
+
+
+    <select id="selectAssetMoveByStatus" parameterType="com.kst.common.base.vo.DataTable"
+            resultMap="assetMoveManageMap">
+        select
+        a.*,b.name
+        from ams_location_history a
+        left join ams_asset_info b on a.no = b.asset_input_no where a.del_flag=false
+        <if test='searchParams.no!="" and searchParams.no!=null'>
+            and a.no like CONCAT( '%','${searchParams.no}', '%')
+        </if>
+        <if test='searchParams.location_type!="" and searchParams.location_type!=null'>
+            <if test="searchParams.location_type==1">
+                and a.delete_date is null
+            </if>
+            <if test="searchParams.location_type==2">
+                and a.delete_date is not null
+            </if>
+        </if>
+        <if test='searchParams.location_id!="" and searchParams.location_id!=null'>
+            and a.location_id=#{searchParams.location_id}
+        </if>
+        order by a.update_date desc,b.asset_input_no desc,STORAGE_DATE desc,if(isnull(delete_date),1,0) desc
+        limit #{searchParams.startNo} , #{pageSize}
+    </select>
+
+    <select id="selectAssetMoveTotalByStatus" resultType="java.lang.Integer"
+            parameterType="com.kst.common.base.vo.DataTable">
+        select
+        count(*)
+        from ams_location_history a
+        left join ams_asset_info b on a.no = b.asset_input_no where a.del_flag=false
+        <if test='searchParams.no!="" and searchParams.no!=null'>
+            and a.no like CONCAT( '%','${searchParams.no}', '%')
+        </if>
+        <if test='searchParams.location_type!="" and searchParams.location_type!=null'>
+            <if test="searchParams.location_type==1">
+                and a.delete_date is null
+            </if>
+            <if test="searchParams.location_type==2">
+                and a.delete_date is not null
+            </if>
+        </if>
+        <if test='searchParams.location_id!="" and searchParams.location_id!=null'>
+            and a.location_id=#{searchParams.location_id}
+        </if>
+    </select>
+</mapper>

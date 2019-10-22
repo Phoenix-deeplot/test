@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.ams.mapper.AssetInfoMapper">
+    <!-- 这儿定义一个resultMap -->
+
+    <resultMap type="com.kst.ams.vo.AssetInfoVO" id="assetAssetInfoMap">
+        <id property="id" column="id"/>
+        <result property="no" column="no"/>
+        <result property="assetInputNo" column="asset_input_no"/>
+        <result property="name" column="name"/>
+        <result property="classify" column="classify_id"/>
+        <result property="brand" column="brand"/>
+        <result property="supplierId" column="supplier_id"/>
+        <result property="registerDate" column="register_date"/>
+        <result property="buyDate" column="buydate"/>
+        <result property="price" column="price"/>
+        <result property="useLife" column="uselife"/>
+        <result property="reserveScrapDate" column="reservescrap_date"/>
+        <result property="actualScrapDate" column="actualscrap_date"/>
+        <result property="superiorAssetNo" column="superior_asset_no"/>
+        <result property="keepingDepartmentId" column="keepingdepartment_id"/>
+        <result property="locationId" column="location_id"/>
+        <result property="examineTarget" column="examine_target"/>
+        <result property="applyUserid" column="apply_userid"/>
+        <result property="discardUserid" column="discard_userid"/>
+        <result property="statusProperty" column="status_property"/>
+        <result property="qrCodeImg" column="qrcode_img"/>
+        <result property="assetPhoto" column="asset_photo"/>
+        <result property="takeoutUserid" column="takeout_userid"/>
+        <result property="classifyName" column="classifyName"/>
+        <result property="supplierName" column="supplierName"/>
+        <result property="organizationName" column="organizationName"/>
+        <result property="locationName" column="locationName"/>
+
+
+        <result property="createBy" column="create_by"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+    <resultMap id="assetListVoMap" type="com.kst.ams.vo.AssetListVO">
+        <id property="assetInputNo" column="asset_input_no"/>
+        <result property="name" column="name"/>
+        <result property="classifyName" column="classifyName"/>
+        <result property="amount" column="amount"/>
+        <!--<result property="useAmount" column="useAmount"/>-->
+        <result property="price" column="price"/>
+        <result property="supplierName" column="supplierName"/>
+        <result property="useLife" column="uselife"/>
+        <result property="buyDate" column="buydate"/>
+        <result property="reserveScrapDate" column="reservescrap_date"/>
+        <result property="actualScrapDate" column="actualscrap_date"/>
+        <result property="applyUserName" column="applyUserName"/>
+        <result property="locationName" column="locationName"/>
+        <result property="takeOutUserName" column="takeOutUserName"/>
+        <result property="examineTarget" column="examine_target"/>
+        <result property="remarks" column="remarks"/>
+    </resultMap>
+
+    <resultMap id="pcInfoMap" type="com.kst.ams.vo.PcInfoVO">
+        <result property="pcTypeName" column="pc_type_name"/>
+        <result property="color" column="color"/>
+        <result property="cpuName" column="cpu_name"/>
+        <result property="size" column="size"/>
+        <result property="ram" column="ram"/>
+        <result property="hardDiskCapacity1" column="hard_disk_capacity1"/>
+        <result property="hardDiskCapacity2" column="hard_disk_capacity2"/>
+        <result property="vga" column="VGA"/>
+        <result property="macAddress" column="MACAddress"/>
+    </resultMap>
+
+    <resultMap id="netInfoMap" type="com.kst.ams.vo.NetInfoVO">
+        <result property="ipv4" column="IPV4"/>
+        <result property="ipv6" column="IPV6"/>
+        <result property="moreInfo" column="more_info"/>
+    </resultMap>
+
+    <resultMap id="softwareInfo" type="com.kst.ams.vo.SoftwareInfoVO">
+        <result property="softAssetNo" column="soft_asset_no"/>
+        <result property="name" column="name"/>
+        <result property="softwareName" column="pc_type_name"/>
+        <result property="moreInfo" column="more_info"/>
+    </resultMap>
+
+    <select id="selectPcInfo" parameterType="java.lang.String" resultMap="pcInfoMap">
+      select *,sys_getDictLable('ams_pc_type',pc_id) as pc_type_name from ams_pc_info where asset_no=#{_parameter} and del_flag=false
+    </select>
+
+    <select id="selectNetInfo" parameterType="java.lang.String" resultMap="netInfoMap">
+      select * from ams_net_info where asset_no=#{_parameter} and del_flag=false
+    </select>
+
+    <select id="selectSoftInfo" parameterType="java.lang.String" resultMap="softwareInfo">
+      select *,sys_getDictLable('ams_soft_type',software_id) as pc_type_name from ams_software_info where asset_no=#{_parameter} and del_flag=false
+    </select>
+
+    <select id="selectTakeOutAsset" parameterType="com.kst.common.base.vo.DataTable" resultMap="assetAssetInfoMap">
+        select *
+        from ams_asset_info where del_flag=false
+        and status_property != 3
+        and takeout_userid is null
+        and apply_userid is not null
+        <if test='searchParams.name!="" and searchParams.name!=null'>
+            and name like CONCAT( '%','${searchParams.name}', '%')
+        </if>
+        <if test='searchParams.asset_input_no!="" and searchParams.asset_input_no!=null'>
+            and asset_input_no like CONCAT( '%','${searchParams.asset_input_no}', '%')
+        </if>
+        <if test='searchParams.classify_id!="" and searchParams.classify_id!=null'>
+            and classify_id = #{searchParams.classify_id}
+        </if>
+        order by asset_input_no desc
+        limit #{searchParams.startNo} , #{pageSize}
+    </select>
+
+    <select id="selectTakeOutAssetTotal" resultType="java.lang.Integer"
+            parameterType="com.kst.common.base.vo.DataTable">
+        select count(*)
+        from ams_asset_info where del_flag=false
+        and status_property != 3
+        and takeout_userid is null
+        and apply_userid is not null
+        <if test='searchParams.name!="" and searchParams.name!=null'>
+            and name like CONCAT( '%','${searchParams.name}', '%')
+        </if>
+        <if test='searchParams.asset_input_no!="" and searchParams.asset_input_no!=null'>
+            and asset_input_no like CONCAT( '%','${searchParams.asset_input_no}', '%')
+        </if>
+        <if test='searchParams.classify_id!="" and searchParams.classify_id!=null'>
+            and classify_id = #{searchParams.classify_id}
+        </if>
+    </select>
+
+    <select id="selectSoftAmount" parameterType="java.lang.String" resultType="java.lang.Boolean">
+        select
+        (select count(*) from ams_software_info where del_flag=0 and asset_flag=1 and soft_asset_no=#{assetNo})
+        >=(select amount from ams_asset_info where asset_input_no=#{assetNo})  from dual;
+    </select>
+
+    <select id="selectAssetList" parameterType="java.util.Map" resultMap="assetListVoMap">
+        select
+        a.asset_input_no,
+        a.name,
+        sys_getDictLable('ams_asset_type',a.classify_id) as classifyName,
+        a.amount,
+        a.price,
+        ams_getSupplierName(a.supplier_id) as supplierName,
+        a.uselife,
+        date_format(a.buydate,'%Y%-%m%-%d') as buydate,
+        date_format(a.reservescrap_date,'%Y%-%m%-%d') as reservescrap_date,
+        date_format(a.actualscrap_date,'%Y%-%m%-%d') as actualscrap_date,
+        sys_getUserName(a.apply_userid) as applyUserName,
+        ams_getLocationName(a.location_id) as locationName,
+        sys_getUserName(a.takeout_userid) as takeOutUserName,
+        sys_getDictLable('ams_asset_target',a.examine_target) as examine_target,
+        a.remarks from ams_asset_info a
+        where del_flag=false
+        <if test='name!=null and name!="" '>
+            and a.name like CONCAT( '%','${name}', '%')
+        </if>
+        <if test="classifyId!=null and classifyId.size>=0">
+            and a.classify_id in
+            <foreach collection="classifyId" item="class" index="index" open="(" close=")" separator=",">
+                #{class}
+            </foreach>
+        </if>
+        <if test='statusProperty!=null and statusProperty!=""'>
+            and a.status_property=#{statusProperty}
+        </if>
+        order by asset_input_no desc
+    </select>
+
+    <select id="selectSoftUseAmount" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select count(*) from ams_software_info where soft_asset_no=#{_parameter} and del_flag=false and scrap_flag=false;
+    </select>
+
+    <select id="selectApplyUseAmount" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select count(*) from ams_asset_apply where RETURN_DATE is null and no=#{_parameter}
+    </select>
+
+    <select id="selectAssetExamine" resultType="com.kst.ams.vo.AssetExamineDetailVO" parameterType="java.lang.String">
+        select
+            i.asset_input_no as assetNo,
+            i.name,
+            sys_getDictLable('ams_asset_type',i.classify_id) as classifyName,
+            i.amount,
+            i.uselife as useLife,
+            date_format(i.reservescrap_date,'%Y%-%m%-%d') as reserveScrapDate,
+            sys_getUserName(i.apply_userid) as applyUserName,
+            ams_getLocationName(i.location_id) as locationName,
+            sys_getUserName(i.takeout_userid) as takeOutUserName,
+            sys_getUserName(d.examiner_id) as examineUserName,
+            date_format(d.examine_date,'%Y%-%m%-%d') as examineDate,
+            sys_getDictLable('ams_examineResult_type',d.examineresult_id) as examineResult,
+            d.reason_txt as reason
+        from ams_asset_info i left join ams_asset_examine_detail d on i.asset_input_no=d.asset_no
+        where d.EXAMINE_NO=#{assetNo} and i.del_flag=false and d.del_flag=false
+    </select>
+
+    <select id="selectAssetDiscardByDate" parameterType="java.util.Map" resultType="com.kst.ams.vo.AssetDiscardVO">
+        select
+            asset_input_no as assetInputNo,
+            name as name,
+            sys_getDictLable('ams_asset_type',classify_id) as classifyName,
+            ams_getSupplierName(supplier_id) as supplierName,
+            uselife as useLife,
+            amount as amount,
+            price as price,
+            date_format(buydate,'%Y%-%m%-%d') as buyDate,
+            date_format(reservescrap_date,'%Y%-%m%-%d') as reserveScrapDate,
+            date_format(actualscrap_date,'%Y%-%m%-%d') as actualscrapDate,
+            sys_getUserName(apply_userid) as applyUserName,
+            ams_getLocationName(location_id) as locationName,
+            sys_getUserName(takeout_userid) as takeOutName,
+            sys_getDictLable('ams_asset_target',examine_target) as examineTarget
+         from ams_asset_info
+         where del_flag=false
+         <if test='reserveYy!=null and reserceYy!=""'>
+             and date_format(reservescrap_date,'%Y')=#{reserveYy}
+         </if>
+        <if test='reserveYymm!=null and reserceYymm!=""'>
+            and  date_format(reservescrap_date,'%Y%m')=#{reserveYymm}
+        </if>
+        <if test='actualYy!=null and actualYy!=""'>
+            and  date_format(actualscrap_date,'%Y')=#{actualYy}
+        </if>
+        <if test='actualYymm!=null and actualYymm!=""'>
+            and   date_format(actualscrap_date,'%Y%m')=#{actualYymm}
+        </if>
+    </select>
+
+    <select id="selectCSVData" resultMap="assetAssetInfoMap" parameterType="java.util.Map">
+        select *,
+        sys_getDictLable('ams_asset_type',classify_id) as classifyName,
+        ams_getSupplierName(supplier_id) as supplierName,
+        sys_getOrganizationName(keepingdepartment_id) as organizationName,
+        ams_getLocationName(location_id) as locationName
+        from ams_asset_info where id in
+        <foreach collection="ids" item="class" index="index" open="(" close=")" separator=",">
+            #{class}
+        </foreach>
+    </select>
+
+</mapper>

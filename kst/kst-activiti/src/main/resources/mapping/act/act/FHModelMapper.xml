@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kst.activiti.mapper.act.FHModelMapper">
+	<resultMap type="com.kst.activiti.vo.FHModelVO" id="FHModelMap">
+		<id property="id" column="ID_"/>
+		<result property="applyId" column="APPLY_ID"/>
+		<result property="no" column="no"/>
+		<result property="applyDate" column="APPLY_DATE"/>
+		<result property="name" column="name"/>
+		<result property="returnDate" column="STORAGE_DATE"/>
+		<result property="moreInfo" column="MORE_INFO"/>
+		<result property="remarks" column="remarks"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="applyStatus" column="apply_userId"/>
+	</resultMap>
+	<!--模型表名 -->
+	<sql id="tableName">
+		ACT_RE_MODEL
+	</sql>
+	
+	<!--数据字典表名 -->
+	<sql id="dicTableName">
+		SYS_DICTIONARIES
+	</sql>
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="com.kst.common.base.vo.DataTable" resultMap="FHModelMap">
+		select
+			a.ID_,	
+			a.REV_,	
+			a.NAME_,	
+			a.KEY_,	
+			a.CATEGORY_,	
+			a.CREATE_TIME_,	
+			a.LAST_UPDATE_TIME_,	
+			a.VERSION_,
+			d.BIANMA,
+			d.NAME DNAME
+		from 
+		<include refid="tableName"></include> a
+		left join 
+		<include refid="dicTableName"></include> d
+		on a.CATEGORY_ = d.BIANMA
+		where 1=1
+		<if test="searchParams.keywords!= null and searchParams.keywords != ''"><!-- 关键词检索 -->
+			and
+				(
+					a.NAME_ LIKE CONCAT(CONCAT('%', #{searchParams.keywords}),'%')
+				)
+		</if>
+		<if test="searchParams.category != null and searchParams.category != ''"><!-- 分类检索 -->
+			and a.CATEGORY_=#{searchParams.category}
+		</if>
+		order by a.LAST_UPDATE_TIME_ desc
+	</select>
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="com.kst.common.base.vo.DataTable" resultMap="FHModelMap">
+		select
+			ID_,
+			CATEGORY_
+		from 
+		<include refid="tableName"></include>
+		where 
+			ID_ = #{ID_}
+	</select>
+	
+	<!-- 修改类型 -->
+	<update id="edit" parameterType="com.kst.common.base.vo.DataTable">
+		update
+		<include refid="tableName"></include>
+		set 
+			CATEGORY_ = #{category}
+		where 
+			ID_ = #{ID_}
+	</update>
+	
+</mapper>
+
+
+
+
+
+
+
+
+

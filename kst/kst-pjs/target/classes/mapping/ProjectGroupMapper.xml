@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kst.pjs.mapper.ProjectGroupMapper">
+
+    <resultMap type="com.kst.pjs.entity.ProjectGroup" id="groupMap">
+        <id property="id" column="id"/>
+        <result property="pjId" column="pj_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="position" column="position"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="level" column="level"/>
+        <result property="parentIds" column="parent_ids"/>
+        <result property="sort" column="sort"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateBy" column="update_id"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="parentName" column="parent_name"/>
+    </resultMap>
+
+    <resultMap id="userMap" type="com.kst.sys.api.vo.UserVO">
+        <id property="id" column="id"/>
+        <result property="loginName" column="login_name"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="tel" column="tel"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
+        <result property="salt" column="salt"/>
+        <result property="locked" column="locked"/>
+        <result property="disableFlag" column="disable_flag"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="icon" column="icon"/>
+        <result property="organizationId" column="organization_id"/>
+        <result property="major" column="major"/>
+        <result property="organizationName" column="organization_name"></result>
+    </resultMap>
+
+
+    <select id="selectProjectGroup" resultMap="groupMap" parameterType="java.util.Map">
+        select * from pjs_project_group g
+        left join sys_user u on g.user_id=u.id
+        where g.del_flag=false
+        <if test='pjId!=null and pjId!="" or pjId==0'>
+            <choose>
+                <when test="pjId==0">
+                    and pj_id is null
+                </when>
+                <otherwise>
+                    and pj_id=#{pjId}
+                </otherwise>
+            </choose>
+        </if>
+        <if test='id!=null and id!=""'>
+            and g.id=#{id}
+        </if>
+    </select>
+
+    <select id="selectMaxId" resultType="java.lang.Long">
+        select case  when max(id) IS NULL then '1' else max(id)+1 end as id from pjs_project_group
+    </select>
+
+    <select id="selectUserByPjId" resultMap="userMap" parameterType="java.util.Map">
+        select u.* from pjs_project_group g
+        left join sys_user u on g.user_id=u.id
+        where g.del_flag=false and pj_id=#{pjId}
+    </select>
+
+    <select id="selectProjectUserByPage" resultMap="userMap" parameterType="com.kst.common.base.vo.DataTable">
+      select distinct u.* from pjs_project_group g left join sys_user u on g.user_id=u.id
+      where g.pj_id=#{searchParams.pjId} limit #{searchParams.startNo},#{pageSize}
+    </select>
+
+    <select id="selectProjectUserTotal" resultType="java.lang.Integer" parameterType="com.kst.common.base.vo.DataTable">
+        select count(distinct u.id)  from pjs_project_group g left join sys_user u on g.user_id=u.id
+        where g.pj_id=#{searchParams.pjId}
+    </select>
+
+    <select id="selectDistinctId" resultType="Long">
+        select distinct user_id from pjs_project_group where del_flag=false
+    </select>
+
+</mapper>

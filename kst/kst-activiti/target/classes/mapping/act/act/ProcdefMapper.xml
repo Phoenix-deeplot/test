@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kst.activiti.mapper.act.ProcdefMapper">
+
+    <resultMap type="com.kst.activiti.vo.ProcdefVO" id="procdefMap">
+		<id property="pro_id" column="ID_"/>
+		<result property="name" column="NAME_"/>
+		<result property="key" column="KEY_"/>
+		<result property="version" column="VERSION_"/>
+		<result property="deploymentId" column="DEPLOYMENT_ID_"/>
+		<result property="resourceName" column="RESOURCE_NAME_"/>
+		<result property="dgrmResourceName" column="DGRM_RESOURCE_NAME_"/>
+		<result property="hasStartFormKey" column="HAS_START_FORM_KEY_"/>
+		<result property="hasGraphicalNotation" column="HAS_GRAPHICAL_NOTATION_"/>
+		<result property="suspensionState" column="SUSPENSION_STATE_"/>
+
+        <result property="DEPLOY_TIME_" column="DEPLOY_TIME_"/>
+	</resultMap>
+	<!--流程定义表名 -->
+	<sql id="tableName">
+		ACT_RE_PROCDEF
+	</sql>
+	
+	<!--部署表名 -->
+	<sql id="detableName">
+		ACT_RE_DEPLOYMENT
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		ID_,	
+		REV_,	
+		CATEGORY_,	
+		NAME_,	
+		KEY_,	
+		VERSION_,	
+		DEPLOYMENT_ID_,	
+		RESOURCE_NAME_,	
+		DGRM_RESOURCE_NAME_,	
+		DESCRIPTION_,	
+		HAS_START_FORM_KEY_,	
+		HAS_GRAPHICAL_NOTATION_,	
+		SUSPENSION_STATE_,	
+		TENANT_ID_,	
+		ENGINE_VERSION_	
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{ID_},	
+		#{REV_},	
+		#{CATEGORY_},	
+		#{NAME_},	
+		#{KEY_},	
+		#{VERSION_},	
+		#{DEPLOYMENT_ID_},	
+		#{RESOURCE_NAME_},	
+		#{DGRM_RESOURCE_NAME_},	
+		#{DESCRIPTION_},	
+		#{HAS_START_FORM_KEY_},	
+		#{HAS_GRAPHICAL_NOTATION_},	
+		#{SUSPENSION_STATE_},	
+		#{TENANT_ID_},	
+		#{ENGINE_VERSION_}
+	</sql>
+	
+	<!-- 列表 -->
+    <select id="datalistPage" parameterType="com.kst.common.base.vo.DataTable" resultMap="procdefMap">
+		select
+			p.ID_,	
+			p.NAME_,	
+			p.KEY_,	
+			p.VERSION_,	
+			p.DEPLOYMENT_ID_,	
+			p.RESOURCE_NAME_,	
+			p.DGRM_RESOURCE_NAME_,	
+			p.HAS_START_FORM_KEY_,	
+			p.HAS_GRAPHICAL_NOTATION_,
+			p.SUSPENSION_STATE_,
+			d.DEPLOY_TIME_
+		from 
+		<include refid="tableName"></include> p
+		left join
+		<include refid="detableName"></include> d
+		on p.DEPLOYMENT_ID_ = d.ID_
+		where 1=1
+		<if test="searchParams.keywords!= null and searchParams.keywords != ''"><!-- 关键词检索 -->
+			and
+				(
+					p.NAME_ LIKE CONCAT(CONCAT('%', #{searchParams.keywords}),'%')
+				)
+		</if>
+		<if test="searchParams.lastStart != null and searchParams.lastStart != ''"><!-- 开始时间检索 -->
+			and d.DEPLOY_TIME_ &gt;= #{searchParams.lastStart}
+		</if>
+		<if test="searchParams.lastEnd != null and searchParams.lastEnd != ''"><!-- 结束时间检索 -->
+			and d.DEPLOY_TIME_ &lt;= #{searchParams.lastEnd}
+		</if>
+		order by d.DEPLOY_TIME_ desc
+        limit #{searchParams.startNo} , #{pageSize}
+	</select>
+
+</mapper>

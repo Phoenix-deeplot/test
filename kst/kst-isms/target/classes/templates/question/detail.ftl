@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <#import "spring.ftl" as spring>
+    <meta charset="utf-8">
+    <title>组织管理</title>
+    <meta name="viewport" content="width=device-width"/>
+    <link rel="stylesheet" href="${base}/static/bootstrap/css/bootstrap.css">
+    <!-- iCheck for checkboxes and radio inputs -->
+    <link rel="stylesheet" href="${base}/static/plugins/iCheck/all.css">
+    <!-- Bootstrap Switch -->
+    <link rel="stylesheet" href="${base}/static/plugins/bootstrap-table/css/bootstrap-table.css">
+    <link rel="stylesheet" href="${base}/static/plugins/bootstrap-switch/css/bootstrap-switch.css">
+    <link rel="stylesheet" href="${base}/static/plugins/bootstrap-select/css/bootstrap-select.css"/>
+
+    <!-- toastr信息提示框插件 -->
+    <link rel="stylesheet" href="${base}/static/plugins/toastr/css/toastr.css">
+    <link rel="stylesheet" href="${base}/static/AdminLTE/css/AdminLTE.css">
+
+
+    <style>
+        .form-group {
+            height: 55px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- jQuery 3.3.1 -->
+<script src="${base}/static/plugins/jQuery/jquery-3.3.1.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="${base}/static/bootstrap/js/bootstrap.js"></script>
+<!-- Bootstrap switch -->
+
+<script src="${base}/static/plugins/bootstrap-switch/js/bootstrap-switch.js"></script>
+<script src="${base}/static/plugins/bootstrap-select/js/bootstrap-select.js"></script>
+<!-- iCheck 1.0.1 -->
+<script src="${base}/static/plugins/iCheck/icheck.min.js"></script>
+<!-- Bootstrap Validator -->
+<script src="${base}/static/plugins/bootstrapvalidator-master/bootstrapValidator.min.js"></script>
+<!-- toastr 信息提示框插件 -->
+<script src="${base}/static/plugins/toastr/js/toastr.js"></script>
+<!-- Bootstrap select -->
+<script src="${base}/static/plugins/layer/layer.js"></script>
+<script src="${base}/static/plugins/bootstrap-table/js/bootstrap-table.js"></script>
+<script src="${base}/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+
+
+<div class="box box-info" style="margin-bottom:0px;">
+    <!-- form start -->
+    <form class="form-horizontal" id="form">
+        <input hidden="hidden" id="id" name="id" value="${question.id}"/>
+        <input hidden="hidden" id="delIds" name="delIds"/>
+
+        <div class="box-body">
+            <div class="form-group" style="height: 80px;">
+                <label class="col-sm-2 control-label" for="name">考题</label>
+                <div class="col-sm-8">
+                    <textarea type="text" id="name" name="name" class="form-control" rows="3"
+                              placeholder="请输入考题" value="">${question.name}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="nickName">考题分类</label>
+                <div class="col-sm-6" style="height: 30px">
+                    <select name="category" id="category" class="selectpicker" title="请选择"
+                            data-width="150px">
+                        <#list testType as test>
+                            <#if question!=null >
+                                <#if question.category==test.value>
+                                    <option value="${test.value}" selected="selected">${test.label}</option>
+                                <#else>
+                                    <option value="${test.value}">${test.label}</option>
+                                </#if>
+                            <#else>
+                                <option value="${test.value}">${test.label}</option>
+                            </#if>
+                        </#list>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="email">考题类型</label>
+                <div class="col-sm-6">
+                    <#list questionType as questionType>
+                        <#if question!=null >
+                            <#if question.type==questionType.value>
+                                <input type="radio" name="type"  checked="checked"
+                                       value="${questionType.value}">${questionType.label}
+                            <#else>
+                                <input type="radio" name="type" value="${questionType.value}">${questionType.label}
+                            </#if>
+                        <#elseif questionType.value==1 >
+                            <input type="radio"  name="type" checked="checked"
+                                   value="${questionType.value}">${questionType.label}
+                        <#else>
+                            <input type="radio"  name="type" value="${questionType.value}">${questionType.label}
+                        </#if>
+                    </#list>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="email">排序</label>
+                <div class="col-sm-3">
+                    <input type="text" id="sort" name="sort" class="form-control" value="${question.sort}">
+                </div>
+            </div>
+            <div id="trueOrFalseRadio" class="form-group" <#if question.type!=3>hidden="hidden"</#if>>
+                <label class="col-sm-2 control-label" for="email">正确答案</label>
+                <div class="col-sm-10" id="trueAnswerList">
+                    <#if question!=null>
+                        <input type="radio" name="judgeRadio" value="对"
+                                <#if question.type==3>
+                            <#if question.answer=='对'>checked="checked"</#if>
+                        <#else>
+                            checked="checked"
+                                </#if>> 对
+                        <input type="radio" name="judgeRadio" value="错"
+                                <#if question.type==3>
+                            <#if question.answer=='错'>checked="checked"</#if>
+                                </#if>> 错
+                    <#else>
+                        <input type="radio" name="judgeRadio" value="对" checked="checked"> 对
+                        <input type="radio" name="judgeRadio" value="错"> 错
+                    </#if>
+                </div>
+            </div>
+            <div id="answers" if class="form-group" align="center" <#if question.type==3>hidden="hidden"</#if> >
+                <label class="col-sm-1 control-label" for="email"></label>
+                <div class="col-sm-10">
+                    <div id="toolbar">
+                        <button type="button" id="addBtn" onclick="addQuestionItem()" class="btn btn-primary"
+                                role="dialog">
+                            <span class="glyphicon glyphicon-plus"></span>新增选项
+                        </button>
+                        <button type="button" id="delBtn" onclick="removeItem()" class="btn btn-danger">
+                            <span class="glyphicon glyphicon-remove"></span>删除选项
+                        </button>
+                    </div>
+                    <table id="answerList" name="answerList" class="table table-bordered table-hover">
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- /.box-body -->
+        <button type="submit" id="btnConfirm" class="btn btn-primary" style="margin-right: 20px;display: none"><span
+                    class="glyphicon glyphicon-floppy-disk"></span>保存
+        </button>
+        <button type="button" id="btnClose" class="btn btn-default " style="margin-right: 20px;display: none"><span
+                    class="glyphicon glyphicon-remove"></span>关闭
+        </button>
+        <!-- /.box-footer -->
+    </form>
+</div>
+
+<script type="text/javascript">
+
+    var trueAnswers = [];
+
+    $(function () {
+        toastr.options.positionClass = 'toast-center-center';
+        $("#category").selectpicker('refresh');
+        $("#category").selectpicker('render');
+        if ("${question.type}" == 3) {
+            $("#answers").hide();
+        }
+
+        if ($("#id").val() != null) {
+            var an = "${question.answer}";
+            trueAnswers = an.split(",");
+        }
+        loadTable();
+        loadInitialData();
+        formValidator();
+
+    });
+
+    $("[name='type']").iCheck({
+        radioClass: 'iradio_square-green',
+    })
+
+    $("[name='judgeRadio']").iCheck({
+        radioClass: 'iradio_square-green'
+    })
+
+    function loadTable() {
+        $("#answerList").bootstrapTable({
+            //url: '${base}/isms/question/loadQuestionItem',         //请求后台的URL（*）
+            //method: 'post',
+            striped: true,                      //是否显示行间隔色
+            dataType: "json", // 服务器返回的数据类型
+            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            pagination: false,                   //是否显示分页（*）
+            sortable: true,                     //是否启用排序
+            sortName: 'sort',
+            silent: true,
+            sortOrder: "asc",                   //排序方式
+            queryParamsType: "",               //查询参数类型，默认是'limit'，注意：如果想获取页面偏移量offset和页面大小pageSize，参数queryParamsType可不配
+            sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+            pageNumber: 1,                       //初始化加载第一页，默认第一页
+            pageSize: 10,                       //每页的记录行数（*）
+            pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+            search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+            strictSearch: true,
+            showColumns: false,                  //是否显示所有的列
+            minimumCountColumns: 2,             //最少允许的列数
+            clickToSelect: true,                //是否启用点击选中行
+            //height: 600,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+            uniqueId: "id",                     //每一行的唯一标识，一般为主键列
+            //showToggle:true,                    //是否显示详细视图和列表视图的切换按钮
+            cardView: false,                    //是否显示详细视图
+            detailView: false,                   //是否显示父子表
+            toolbar: '#toolbar',
+            formatNoMatches: function () {
+                return '请添加选项';
+            },
+            columns: [{
+                checkbox: true,
+            }, {
+                title: '序列',
+                field: 'index',
+                formatter: function (value, row, index) {
+                    row.index = index + 1;
+                    return index + 1;
+                }
+            }, {
+                title: 'ID',
+                field: 'id',
+                visible: false
+            }, {
+                title: '选项',
+                field: 'value'
+            }, {
+                title: '选项内容',
+                field: 'name'
+            }, {
+                title: '排序',
+                field: 'sort'
+            }, {
+                title: '修改',
+                visible: true,
+                formatter: function (value, row, index) {
+                    var id = "'" + row.id + "'"
+                    return ['<a href="javascript:void(0)" onclick="editQuestionItem(' + id + ',' + row.index + ')" class="btn btn-warning"><span class="glyphicon glyphicon-pencil" ></span> 编辑</a>  ']
+                }
+            }, {
+                field: 'operate', title: '选择答案', align: "center",
+                formatter: function (value, row, index) {
+                    var re = false;
+                    if ($.inArray(row.value, trueAnswers) >= 0) {
+                        re = true;
+                    }
+                    var id = "'" + row.id + "'"
+                    var btn = '<a href="javascript:void(0)" name="trueAnswerBtn" onclick="setTrueAnswer(' + re + ',' + id + ')" id="trueAnswer' + row.index + '" value="false" class="btn btn-danger"><span class="glyphicon glyphicon-remove" ></span></a>  ';
+                    if (re) {
+                        btn = '<a href="javascript:void(0)" name="trueAnswerBtn" onclick="setTrueAnswer(' + re + ',' + id + ')"  id="trueAnswer' + row.index + '" value="true" class="btn btn-success"><span class="glyphicon glyphicon-ok" ></span></a>  '
+                    }
+                    return [btn].join('');
+                }
+            }],
+        });
+    }
+
+    //加载考题答案
+    function loadInitialData() {
+        var id = $("#id").val();
+        if (id == null || id == "") {
+            id = 0;
+        }
+        $.ajax({
+            url: '${base}/isms/question/loadQuestionItem',
+            type: 'post',
+            data: {'id': id},
+            success: function (re) {
+                for (var i = 0; i < re.length; i++) {
+                    var c = $("#answerList").bootstrapTable('getData').length;
+                    $('#answerList').bootstrapTable('insertRow', {
+                        index: c, row: {
+                            'id': re[i].id,
+                            'name': re[i].name,
+                            'value': re[i].value,
+                            'sort': re[i].sort
+                        }
+                    });
+                }
+            },
+            error: function () {
+            }
+        });
+    }
+
+    /*
+    表单验证
+    */
+    function formValidator() {
+        $("#form").bootstrapValidator({
+            message: "输入不合法",
+            fields: {
+                name: {
+                    validators: {
+                        notEmpty: {
+                            message: '考题不能为空'
+                        },
+                        stringLength: {
+                            max: 300,
+                            message: '长度不能超过300位'
+                        }
+                    }
+                },
+                category: {
+                    validators: {
+                        notEmpty: {
+                            message: '请选择考题分类'
+                        }
+                    }
+                },
+                type: {
+                    validators: {
+                        notEmpty: {
+                            message: '请选择考题类型'
+                        }
+                    }
+                },
+                sort: {
+                    validators: {
+                        notEmpty: {
+                            message: '<@spring.message "sys.menu.sort"/><@spring.message "sys.user.validate.notEmpty"/>'
+                        },
+                        digits: {
+                            message: '请输入数字'
+                        },
+                        stringLength: {
+                            min: 1,
+                            max: 3,
+                            message: '长度不能超过3位'
+                        }
+                    }
+                }
+            }
+        }).on('success.form.bv', function (e) {
+            // 设定默认提交方式，防止重复提交
+            e.preventDefault();
+            var $form = $(e.target);
+            //进行表单验证
+            var bv = $form.data('bootstrapValidator');
+            if (bv.isValid()) {
+
+                //通过验证，获取row
+                var rows = $("#answerList").bootstrapTable("getData");
+                //拿到考题类型
+                var type = $("[name='type']:checked").val();
+                var questionItems = [];
+                rows.forEach(function (r) {
+                    //清理新增id
+                    var id = r.id;
+                    if (r.id.substring(0, 3) == 'new') {
+                        questionItems.push({
+                            'name': r.name,
+                            'value': r.value,
+                            'sort': r.sort
+                        })
+                    }else{
+                        questionItems.push({
+                            'id': r.id,
+                            'name': r.name,
+                            'value': r.value,
+                            'sort': r.sort
+                        })
+                    }
+
+                });
+
+                //question的answer值
+                var answer = $("[name='judgeRadio']:checked").val();
+                trueAnswers.sort();
+                if (type != 3) {
+                    answer = trueAnswers.join(",");
+                }
+                var question = {
+                    'id': $("#id").val(),
+                    'name': $("[name='name']").val(),
+                    'category': $("[name='category']").val(),
+                    'type': $("[name='type']:checked").val(),
+                    'sort': $("#sort").val(),
+                    'answer': answer,
+                }
+                if ($("#id").val() == null || $("#id").val() == "") {
+                    //添加
+                    $.ajax({
+                        url: '${base}/isms/question/add',
+                        type: 'post',
+                        data: {
+                            'question': JSON.stringify(question),
+                            'questionItems': JSON.stringify(questionItems)
+                        },
+                        success: function () {
+                            parent.$("#questionTable").bootstrapTable("refresh");
+                            parent.toastr.success("添加试题成功");
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        }, error: function () {
+                            parent.toastr.error("添加试题失败");
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        }
+                    });
+                } else {
+                    //修改
+                    var delIds = $("#delIds").val().substring(0, $("#delIds").val().length - 1);
+
+                    $.ajax({
+                        url: '${base}/isms/question/edit',
+                        type: 'post',
+                        data: {
+                            'question': JSON.stringify(question),
+                            'delIds': delIds,
+                            'questionItems': JSON.stringify(questionItems)
+                        },
+                        success: function () {
+                            parent.$("#questionTable").bootstrapTable("refresh");
+                            parent.toastr.success("修改试题成功");
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        }, error: function () {
+                            parent.toastr.error("修改试题失败");
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    //添加选项
+    function addQuestionItem() {
+        layer.open({
+            type: 2,
+            title: '新增考题选项',
+            maxmin: true,
+            shadeClose: false, // 点击遮罩关闭层
+            area: ['80%', '80%'],
+            content: '${base}/isms/question/addItem',
+            btn: ['确定', '取消'],
+            yes: function (index, layero) {
+                var formSubmit = layer.getChildFrame('form', index);
+                var submited = formSubmit.find('#btnConfirm');
+                submited.click();
+                var child = window[layero.find('iframe')[0]['name']];
+                var item = child.getItem();
+                if (item != null && item != "") {
+                    var c = $("#answerList").bootstrapTable('getData').length;
+                    $('#answerList').bootstrapTable('insertRow', {
+                        index: c, row: {
+                            'id': item.id,
+                            'name': item.name,
+                            'value': item.value,
+                            'sort': item.sort
+                        }
+                    });
+                }
+            }, end: function () {
+            }
+        });
+    }
+
+    //修改选项
+    function editQuestionItem(id, rowIndex) {
+        layer.open({
+            type: 2,
+            title: '修改考题选项',
+            maxmin: true,
+            shadeClose: false, // 点击遮罩关闭层
+            area: ['80%', '80%'],
+            content: '${base}/isms/question/editItem/' + id,
+            btn: ['确定', '取消'],
+            yes: function (index, layero) {
+                var formSubmit = layer.getChildFrame('form', index);
+                var submited = formSubmit.find('#btnConfirm');
+                submited.click();
+                var child = window[layero.find('iframe')[0]['name']];
+                var item = child.getItem();
+                if (item != null && item != "") {
+                    $('#answerList').bootstrapTable('updateRow', {
+                        index: rowIndex - 1, row: item
+                    });
+                }
+            }, end: function () {
+            }
+        });
+    }
+
+    //移除回答
+    function removeItem() {
+        var rows = $('#answerList').bootstrapTable('getSelections');
+        if (rows.length == 0) {
+            toastr.warning("请选择要删除的数据!");
+            return;
+        }
+
+        rows.forEach(function (r) {
+            if (r.id.substring(0, 3) != 'new') {
+                var ids = $("#delIds").val();
+                $("#delIds").val(ids + r.id + ",");
+            }
+
+            if (trueAnswers.indexOf(r.value) != -1) {
+                trueAnswers.splice(trueAnswers.indexOf(r.value), 1);
+            }
+            $('#answerList').bootstrapTable('remove', {field: 'id', values: r.id});
+        });
+        freshTable();
+    }
+
+    $("[name='type']").on("ifChanged", function () {
+        var type = $("[name='type']:checked").val();
+        trueAnswers.splice(0, trueAnswers.length)
+        if (type == 3) {
+            $("#answers").hide();
+            $("#trueOrFalseRadio").show();
+        } else {
+            $("#answers").show();
+            $("#trueOrFalseRadio").hide();
+        }
+        freshTable()
+    });
+
+
+    function setTrueAnswer(isAnswer, id) {
+        var type = $("[name='type']:checked").val();
+        var row = $("#answerList").bootstrapTable("getRowByUniqueId", id);
+        if (isAnswer) {
+            //取消设定为答案
+            trueAnswers.splice(trueAnswers.indexOf(row.value), 1);
+        } else {
+            //设定为答案
+            if (type == 1) {
+                //单选
+                trueAnswers.splice(0, trueAnswers.length)
+
+                trueAnswers.push(row.value);
+            } else if (type == 2) {
+                //多选
+                trueAnswers.push(row.value);
+            }
+        }
+        freshTable()
+
+    }
+
+    function freshTable() {
+        var rows = $("#answerList").bootstrapTable("getData");
+        for (var i = 0; i < rows.length; i++) {
+            $('#answerList').bootstrapTable('updateRow', {
+                index: i, row: {
+                    'id': rows[i].id,
+                    'name': rows[i].name,
+                    'value': rows[i].value,
+                    'sort': rows[i].sort
+                }
+            });
+        }
+    }
+
+    //父页面使用  获取考题正确答案
+    function checkTrueQuestion() {
+        var flag = true;
+        var type = $("[name='type']:checked").val();
+        if (type == 1) {
+            if (trueAnswers.length < 1 || trueAnswers[0] == null || trueAnswers[0] == "") {
+                flag = false;
+            }
+        } else if (type == 2) {
+            if (trueAnswers.length < 2 || trueAnswers[0] == null || trueAnswers[0] == "") {
+                flag = false;
+            }
+        }
+        return flag;
+    }
+
+
+</script>
+</body>
+</html>
